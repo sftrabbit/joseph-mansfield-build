@@ -25,6 +25,7 @@ h1 {
 }
 
 #links {
+	clear: both;
 	width: 300px;
 	margin: 0 auto;
 	padding: 0;
@@ -39,6 +40,23 @@ h1 {
 #links a {
 	color: #347192;
 	text-decoration: none;
+}
+
+@media (max-width: 600px) {
+	header > img {
+		width: 9em;
+		float: left;
+	}
+
+	header > h1 {
+		padding-top: 0.8em;
+		font-size: 2.5em;
+		text-align: left;
+	}
+
+	header:after {
+		clear: both;
+	}
 }
 		</style>
 		<meta name="viewport" content="width=device-width, user-scalable=no">
