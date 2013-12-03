@@ -106,6 +106,7 @@ nav {
 }
 		</style>
 		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -114,6 +115,37 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 
 ga('create', 'UA-17335804-2', 'sftrabbit.co.uk');
 ga('send', 'pageview');
+
+$(function() {
+	var regExp = new RegExp("//" + location.host + "($|/)");
+	$('#links a').each(function() {
+		var href = $(this).prop('href');
+		var isLocal = (href.substring(0,4) === "http") ? regExp.test(href) : true;
+		var hitCallback = function() {
+			document.location = href;
+		};
+		var clickCallback;
+		if (isLocal) {
+			clickCallback = function(e) {
+				e.preventDefault();
+				ga('send','pageview', {'page': '/'+href, 'hitCallback': hitCallback});
+			};
+		} else {
+			var domain = $(this).prop('hostname');
+			clickCallback = function(e) {
+				e.preventDefault();
+				ga('send','event', {
+					'eventCategory': 'Outbound',
+					'eventAction': domain,
+					'eventLabel': href,
+					'hitCallback': hitCallback
+				});
+			};
+		}
+		console.log(domain);
+		$(this).click(clickCallback);
+	});
+});
 		</script>
 	</head>
 	<body>
@@ -123,12 +155,12 @@ ga('send', 'pageview');
 		</header>
 		<nav>
 			<ul id="links">
-				<li><a href="https://github.com/sftrabbit" onClick="ga('send','pageview','/virtual/github');">GitHub</a>
-				<li><a href="http://stackoverflow.com/users/150634/sftrabbit" onClick="ga('send','pageview','/virtual/stackoverflow');">Stack Overflow</a>
-				<li><a href="http://twitter.com/sftrabbit" onClick="ga('send','pageview','/virtual/twitter');">Twitter</a>
-				<li><a href="http://uk.linkedin.com/in/sftrabbit/" onClick="ga('send','pageview','/virtual/linkedin');">LinkedIn</a>
-				<li><a href="http://careers.stackoverflow.com/sftrabbit" onClick="ga('send','pageview','/virtual/careers2.0');">Careers 2.0</a>
-				<li><a href="cv.pdf" onClick="ga('send','pageview','/cv.pdf');">CV</a>
+				<li><a href="https://github.com/sftrabbit">GitHub</a>
+				<li><a href="http://stackoverflow.com/users/150634/sftrabbit">Stack Overflow</a>
+				<li><a href="http://twitter.com/sftrabbit">Twitter</a>
+				<li><a href="http://uk.linkedin.com/in/sftrabbit/">LinkedIn</a>
+				<li><a href="http://careers.stackoverflow.com/sftrabbit">Careers 2.0</a>
+				<li><a href="cv.pdf">CV</a>
 			</ul>
 		</nav>
 	</body>
