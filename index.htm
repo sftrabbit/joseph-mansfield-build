@@ -126,9 +126,10 @@ $(function() {
 		};
 		var clickCallback;
 		if (isLocal) {
+			var hrefattr = $(this).attr('href');
 			clickCallback = function(e) {
 				e.preventDefault();
-				ga('send','pageview', {'page': '/'+href, 'hitCallback': hitCallback});
+				ga('send','pageview', {'page': '/'+hrefattr, 'hitCallback': hitCallback});
 			};
 		} else {
 			var domain = $(this).prop('hostname');
