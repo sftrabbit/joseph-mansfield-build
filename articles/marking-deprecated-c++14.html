@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html prefix="og: http://ogp.me/ns#" lang="en">
 	<head>
 		<title>Marking as deprecated in C++14 by Joseph Mansfield</title>
 		<meta charset="utf-8">
@@ -16,8 +16,10 @@
 
 		<meta name="twitter:card" content="summary">
 		<meta name="twitter:creator" content="@sftrabbit">
-		<meta name="twitter:title" content="Marking as deprecated in C++14">
-		<meta name="twitter:description" content="The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.">
+		<meta property="og:title" content="Marking as deprecated in C++14" />
+		<meta property="og:url" content="http://sftrabbit.co.uk/articles/marking-deprecated-c++14.html" />
+		<meta property="og:description" content="The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity." />
+		<meta property="og:image" content="http://sftrabbit.co.uk/images/logo.svg" />
 	</head>
 	<body>
 		<header>
@@ -47,7 +49,7 @@
 				<div class="row">
 					<article class="column-2" itemscope itemtype="http://schema.org/TechArticle">
 						<header>
-							<h1 itemprop="headline">Marking as deprecated in C++14</h1>
+							<h1 itemprop="name">Marking as deprecated in C++14</h1>
 						</header>
 						<p class="secondary" itemprop="description">The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</p>
 <p>It is common for entities in source code (functions, classes, etc.) to become obsolete or unsafe as the project undergoes development. It's a bad idea to remove those entities without any warning, as it'll break any other code that interfaces with those entities. Instead, it's good practice to mark them as <a href="http://en.wikipedia.org/wiki/Deprecation">deprecated</a> in an attempt to discourage their use.</p>
@@ -146,8 +148,8 @@ void foo() {};
 							<h1>Share this article</h1>
 							<ul class="share-buttons">
 								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-height="24">Share on Google+</div></li>
-								<li><a href="https://twitter.com/share" class="twitter-share-button" data-text="Read “Marking as deprecated in C++14”, a C++ article by Joseph Mansfield" data-size="large" data-via="sftrabbit">Share on Twitter</a></li>
-								<li><div class="fb-like" data-href="/articles/marking-deprecated-c++14.html" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div></li>
+								<li><a href="https://twitter.com/share" class="twitter-share-button" data-text="Read “Marking as deprecated in C++14”, a C++ article" data-size="large" data-via="sftrabbit">Share on Twitter</a></li>
+								<li><div class="fb-like" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div></li>
 							</ul>
 						</section>
 					</div>
