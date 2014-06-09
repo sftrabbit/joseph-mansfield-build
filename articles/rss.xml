@@ -8,5 +8,15 @@
     <title>Joseph Mansfield</title>
     <link>http://sftrabbit.co.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
+    <pubDate>Mon, 09 Jun 2014 00:00:00 +0100</pubDate>
+    <item>
+      <title>Marking as deprecated in C++14</title>
+      <link>http://sftrabbit.co.uk/articles/marking-deprecated-c++14.html</link>
+      <description>The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</description>
+      <pubDate>Mon, 09 Jun 2014 00:00:00 +0100</pubDate>
+      <guid>http://sftrabbit.co.uk/articles/marking-deprecated-c++14.html</guid>
+      <dc:date>2014-06-09T00:00:00+01:00</dc:date>
+    </item>
+    <dc:date>2014-06-09T00:00:00+01:00</dc:date>
   </channel>
 </rss>
