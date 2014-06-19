@@ -8,7 +8,7 @@
     <title>Joseph Mansfield</title>
     <link>http://josephmansfield.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
-    <pubDate>Mon, 09 Jun 2014 00:00:00 +0100</pubDate>
+    <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
     <item>
       <title>Marking as deprecated in C++14</title>
       <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
@@ -17,6 +17,22 @@
       <guid>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</guid>
       <dc:date>2014-06-09T00:00:00+01:00</dc:date>
     </item>
-    <dc:date>2014-06-09T00:00:00+01:00</dc:date>
+    <item>
+      <title>Avoiding the ambiguity of raw pointers</title>
+      <link>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</link>
+      <description>C++ is giving us more ways to write better, safer code. It is now commonly accepted that raw pointers should be avoided, as better alternatives are typically available. We look at the fundamental properties of raw pointers that make them unsuitable for modern code.</description>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</guid>
+      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>Custom syntax highlighting with Jekyll and Pygments</title>
+      <link>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</link>
+      <description>Jekyll's built-in syntax highlighting doesn't always come out the way you want it. Learn how to customize the behavior of the Pygments highlighter in Jekyll.</description>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</guid>
+      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
+    </item>
+    <dc:date>2014-06-19T00:00:00+01:00</dc:date>
   </channel>
 </rss>

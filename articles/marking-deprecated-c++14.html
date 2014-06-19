@@ -58,8 +58,8 @@
 						</header>
 						<p class="secondary" itemprop="description">The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</p>
 <p>It is common for entities in source code (functions, classes, etc.) to become obsolete or unsafe as the project undergoes development. It's a bad idea to remove those entities without any warning, as it'll break any other code that interfaces with those entities. Instead, it's good practice to mark them as <a href="http://en.wikipedia.org/wiki/Deprecation">deprecated</a> in an attempt to discourage their use.</p>
-<aside>Other existing attributes include <code>noreturn</code>, <code>carries_dependency</code>, and <code>alignas</code> (which has a different syntax).</aside>
 <p>The upcoming C++ release, <a href="http://en.wikipedia.org/wiki/C%2B%2B14">C++14</a>, introduces the <code>deprecated</code> attribute for specifying that an entity is deprecated. The compiler can then emit warnings whenever these entities are being used. In general, attributes are given as a comma-separated list in double square brackets and can be used in various locations. For example, we can deprecate a function by placing the <code>deprecated</code> attribute at the very beginning of the function declaration:</p>
+<aside>Other existing attributes include <code>noreturn</code>, <code>carries_dependency</code>, and <code>alignas</code> (which has a different syntax).</aside>
 
 <div class="highlight"><pre><code class="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{};</span>
@@ -70,10 +70,10 @@
 
 <p>Compiled with the latest build of <a href="http://clang.llvm.org/">clang</a>, this gives the following warning:</p>
 
-<div class="highlight"><pre><code class="clang"><span class="s">warning</span>: &#39;foo&#39; is deprecated <span class="c1">[-Wdeprecated-declarations]</span>
+<div class="highlight"><pre><code class="clang"><span class="gw">warning</span>: &#39;foo&#39; is deprecated <span class="c1">[-Wdeprecated-declarations]</span>
         foo();
         ^
-<span class="nf">note</span>: &#39;foo&#39; has been explicitly marked deprecated here
+<span class="gn">note</span>: &#39;foo&#39; has been explicitly marked deprecated here
 void foo() {};
      ^</code></pre></div>
 
@@ -84,10 +84,10 @@ void foo() {};
 
 <p>This gives the following warning instead:</p>
 
-<div class="highlight"><pre><code class="clang"><span class="s">warning</span>: &#39;foo&#39; is deprecated: use bar instead <span class="c1">[-Wdeprecated-declarations]</span>
+<div class="highlight"><pre><code class="clang"><span class="gw">warning</span>: &#39;foo&#39; is deprecated: use bar instead <span class="c1">[-Wdeprecated-declarations]</span>
         foo();
         ^
-<span class="nf">note</span>: &#39;foo&#39; has been explicitly marked deprecated here
+<span class="gn">note</span>: &#39;foo&#39; has been explicitly marked deprecated here
 void foo() {};
      ^</code></pre></div>
 
@@ -137,17 +137,34 @@ void foo() {};
 							<p class="secondary">Notice any mistakes? <a href="https://github.com/sftrabbit/JosephMansfieldArticles/blob/master/2014-06-09-marking-deprecated-c++14.html">Fork the article on GitHub</a>.</p>
 						</footer>
 					</article>
+
+					<ins class="adsbygoogle josephmansfield-article-side" data-ad-client="ca-pub-6789411983750873" data-ad-slot="7401738733"></ins>
+
 				</div>
 
 				<div class="row">
-					<ins class="adsbygoogle josephmansfield-article" data-ad-client="ca-pub-6789411983750873" data-ad-slot="2589226334"></ins>
+					<ins class="adsbygoogle josephmansfield-article-bottom" data-ad-client="ca-pub-6789411983750873" data-ad-slot="2589226334"></ins>
 				</div>
 
+				<div class="row">
+					<div class="column-2">
+						<div id="disqus_thread"></div>
+					</div>
+				</div>
 			</div>
 			<div class="alt">
 				<div class="container">
 					<div class="row">
 
+
+						<section class="column-2">
+							<h1>Want something else to read?</h1>
+							<article>
+								<h1><a href="/articles/custom-syntax-highlighting-jekyll-pygments.html">Custom syntax highlighting with Jekyll and Pygments</a></h1>
+								<p class="secondary">Jekyll's built-in syntax highlighting doesn't always come out the way you want it. Learn how to customize the behavior of the Pygments highlighter in Jekyll.</p>
+								<p><a href="/articles/custom-syntax-highlighting-jekyll-pygments.html">Read this Web Development article →</a></p>
+							</article>
+						</section>
 
 						<section class="column-1">
 							<h1>Share this article</h1>
@@ -215,6 +232,16 @@ ga('send', 'pageview');
   js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&appid=526696677453668&version=v2.0";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
+
+var disqus_shortname = 'josephmansfield';
+var disqus_identifier = '/articles/marking-deprecated-c++14';
+var disqus_title = 'Marking as deprecated in C++14';
+
+(function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
 
 		</script>
 
