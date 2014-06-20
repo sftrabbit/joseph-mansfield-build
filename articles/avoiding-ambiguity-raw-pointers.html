@@ -57,10 +57,10 @@
 							<h1 itemprop="name">Avoiding the ambiguity of raw pointers</h1>
 						</header>
 						<p class="secondary" itemprop="description">C++ is giving us more ways to write better, safer code. It is now commonly accepted that raw pointers should be avoided, as better alternatives are typically available. We look at the fundamental properties of raw pointers that make them unsuitable for modern code.</p>
-<p>I recently posted an answer on Stack Overflow about <a href="http://stackoverflow.com/a/22146244/150634">the uses of dynamic allocation and raw pointers</a> in which I highlighted alternatives that you should prefer. You'll probably see this kind of advice regularly in the context of modern C++ style. These rules exist because there's almost always safer alternatives that are less prone to introducing bugs.</p>
-<p>We will look specifically at the properties of raw pointers (i.e. not smart pointers) that make them such a poor choice in most situations. It is important that types are chosen to be as specific as possible, so that they cannot be used in ways for which they weren't intended. I often think about what types <em>tell me</em>. Just by looking at a type of a variable (perhaps a function parameter), what can I determine about the values that it should take?</p>
-<p>Raw pointers are far too ambiguous. Their possible uses are usually much broader than their intended use. If you see a function with a pointer parameter, it is difficult to know what you should be passing to the function without reading its documentation. Even then, you'd better hope you understood it correctly and are passing the correct things. The more specific we can be with our types, the better, as it ensures that code is readable, safe, and trustworthy.</p>
-<p>Let's consider a pointer type, <code>T*</code>, and the questions it leaves unanswered:</p>
+<p>I recently posted an answer on Stack Overflow about <a href="http://stackoverflow.com/a/22146244/150634">the uses of dynamic allocation and raw pointers</a> in which I highlighted alternatives that you should prefer. You'll probably see this kind of advice regularly in the context of modern C++ style. These rules exist because there's almost always safer alternatives that are less likely to introduce bugs.</p>
+<p>We'll ignore dynamic allocation and look specifically at the properties of raw pointers (i.e. not smart pointers) that make them such a poor choice in most situations. It is important that types are chosen to be as specific as possible, so that they cannot be used in ways for which they weren't intended. I often think about what types <em>tell me</em>. Just by looking at a type of a variable (perhaps a function parameter), what can I determine about the values that it should take?</p>
+<p>Raw pointers are far too ambiguous. It is possible to use them in ways much broader than their intended use, perhaps with terrible consequences. If you see a function with a pointer parameter, it is difficult to know what you should be passing to the function without reading its documentation. Even then, you'd better hope you understood it correctly and are passing the correct things. The more specific we can be with our types the better, as it ensures that our code is safe, trustworthy, and easily understood.</p>
+<p>Let's consider a pointer type, <code>T*</code>, and some questions it leaves unanswered:</p>
 <ul>
 	<li>Should it necessarily point at a valid <code>T</code> object?</li>
 	<li>Can it be a null pointer?</li>
@@ -69,17 +69,17 @@
 	<li>Who is responsible for <code>delete</code>ing the object, if necessary? (Who owns it?)</li>
 	<li>Is the object just one element in an array of <code>T</code>?</li>
 </ul>
-<p>In fact, all this pointer really says is “I store the address of what is <em>hopefully</em> a <code>T</code> object”. It's not nice to have all these mysteries whenever we see a raw pointer. Ideally, our types should be explicit about as many of these things as possible.</p>
+<p>In fact, all this pointer really says is “I store either a null pointer value or the address of what is <em>hopefully</em> a <code>T</code> object”. It's not nice to have all these mysteries whenever we see a raw pointer. Ideally, our types should be explicit about as many of these things as possible.</p>
 <p>We will now consider some common uses of pointers and the ambiguities they present.</p>
 <section>
 	<h1>Arrays</h1>
-	<p>Pointers are commonly used to point at the first element in an array. This is necessary when an array itself cannot be used, such as when the array has dynamic length or as the parameter of a function. The normal array subscripting syntax can be used with the pointer, so it can largely be treated as an array. Using pointers in this way is ambiguous because nothing about the type actually says it's pointing at an array.</p>
+	<p>Pointers are commonly used to point at the first element in an array. This is necessary when an array itself cannot be used, such as when the array has dynamic length or as the parameter of a function. The normal array subscripting syntax can be used with the pointer, so it can largely be treated as an array. Using pointers in this way is ambiguous because nothing about the type actually says it's pointing at an element in an array.</p>
 <div class="highlight"><pre><code class="cpp"><span class="k">struct</span> <span class="n">Conversation</span> <span class="p">{</span>
 	<span class="c1">// ...</span>
 	<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">*</span> <span class="n">messages</span><span class="p">;</span>
 	<span class="c1">// ...</span>
 <span class="p">};</span></code></pre></div>
-	<p>Here, only the plural name of the data member suggests that it might be pointing at the first element in array. How would I know without looking at how the pointer is initialized?</p>
+	<p>Here, only the plural name of the data member suggests that it might be pointing at the first element in array. How would we know without looking at how the pointer is being assigned?</p>
 	<p>In this case, we are much better off using a standard library container:</p>
 <div class="highlight"><pre><code class="cpp"><span class="k">struct</span> <span class="n">Conversation</span> <span class="p">{</span>
 	<span class="c1">// ...</span>
@@ -122,16 +122,20 @@
 <span class="kt">void</span> <span class="nf">destroyImage</span><span class="p">(</span><span class="n">Image</span><span class="o">*</span><span class="p">);</span></code></pre></div>
 	<p>It is then expected that the resulting pointer is later passed to the deallocation function when the object is no longer required. This can easily lead to memory leaks if the user fails to deallocate the object correctly. It is not clear at all from the return type that we now have the responsibility of deallocating the object or how we should go about doing so.</p>
 	<p>C++11 introduced a number of smart pointers. These smart pointers represent some particular ownership of a dynamically allocated object. For example, <a href="http://en.cppreference.com/w/cpp/memory/unique_ptr"><code>std::unique_ptr</code></a> represents unique ownership, while <a href="http://en.cppreference.com/w/cpp/memory/shared_ptr"><code>std::shared_ptr</code></a> represents shared ownership. The smart pointers will automatically deallocate the object when all ownership is given up.</p>
-	<aside><p>There is <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3514.pdf">a proposal</a> to introduce a non-owning smart pointer for when ownership should not be transferred. However, references work well in most situations.</p></aside>
 	<p>The previous C-like library interface would now be written as follows:</p>
 <div class="highlight"><pre><code class="cpp"><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span> <span class="n">createImage</span><span class="p">();</span></code></pre></div>
 	<p>This now clearly states that we are being given unique ownership of the <code>Image</code>. That is, the library is promising that it does not hold on to the object and so it is okay for you to give up ownership whenever you like. An added bonus is that now you do not need to manually deallocate the <code>Image</code>. This will happen automatically whenever you give up ownership.</p>
 </section>
 <section>
+	<h1>Other uses</h1>
+	<p>Pointers allow polymorphic behavior. That is, calling a virtual member function through a pointer will ensure that the dynamic type of the object will be looked up. This is also supported by references and smart pointers, so the same benefits as above apply here. We should always be able to assume, under the <a href="http://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitution principle</a>, that any of these pointer-like types will happily accept derived types also. There is no additional ambiguity here.</p>
+	<p>Sometimes we want to share a pointer to some object without passing any ownership. When raw pointers are used in this way, they're described as observing or non-owning pointers. There is currently no way to express this intent so raw pointers are commonly used and exhibit the same problems we have seen above. There is, however, <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3514.pdf">a proposal</a> to introduce a non-owning smart pointer. Despite this, I suggest that interfaces that would like to observe an object should have a reference type instead.</p>
+	<p>If you require some form of reference semantics that is not provided by any existing type (and raw pointers are too broad, as usual), why not implement it yourself? A simple type that clearly expresses your intentions can go a long way towards improving your code.</p>
+</section>
+<section>
 	<h1>Conclusion</h1>
 	<p>We have seen that raw pointers really are pretty bad at expressing intent, simply because they're so ambiguous. There is almost always a better alternative type you can use that expresses the values that the object should take more clearly. In fact, good code can often get away with using no raw pointers at all.</p>
 	<p>Note that the use of raw pointers is independent of the use of <code>new</code> for dynamic allocation. We can pass pointers to objects with automatic or static storage, after all. However, <code>new</code> is equally as problematic and can be avoided by using smart pointers and <abbr title="Resource Acquisition Is Initialization">RAII</abbr> appropriately. My <a href="http://stackoverflow.com/a/22146244/150634">answer on Stack Overflow</a> covers this briefly.</p>
-	<p>One use of raw pointers that was not covered is polymorphism. References and smart pointers can also be used for polymorphism, which have the same advantages as described in their relevant sections.</p>
 	<p>For further information, look up more about <a href="http://stackoverflow.com/q/106508/150634">smart pointers</a>, the slides for <a href="http://klmr.me/slides/modern-cpp/">“Don't use f*cking pointers”</a>, and <a href="http://programmers.stackexchange.com/q/56935/80257">“Why are pointers not recommended when coding with C++?”</a>.
 </section>
 
@@ -164,9 +168,9 @@
 						<section class="column-2">
 							<h1>Want something else to read?</h1>
 							<article>
-								<h1><a href="/articles/marking-deprecated-c++14.html">Marking as deprecated in C++14</a></h1>
-								<p class="secondary">The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</p>
-								<p><a href="/articles/marking-deprecated-c++14.html">Read this C++ article →</a></p>
+								<h1><a href="/articles/custom-syntax-highlighting-jekyll-pygments.html">Custom syntax highlighting with Jekyll and Pygments</a></h1>
+								<p class="secondary">Jekyll's built-in syntax highlighting doesn't always come out the way you want it. Learn how to customize the behavior of the Pygments highlighter in Jekyll.</p>
+								<p><a href="/articles/custom-syntax-highlighting-jekyll-pygments.html">Read this Web Development article →</a></p>
 							</article>
 						</section>
 
