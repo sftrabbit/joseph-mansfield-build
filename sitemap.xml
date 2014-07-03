@@ -2,28 +2,28 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</loc>
-        <lastmod>2014-07-03T15:21:10+01:00</lastmod>
+        <lastmod>2014-07-03T18:35:31+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</loc>
-        <lastmod>2014-07-03T15:21:10+01:00</lastmod>
+        <lastmod>2014-07-03T18:35:31+01:00</lastmod>
     </url>
     <url>
         <loc>
             http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html
         </loc>
-        <lastmod>2014-07-03T15:21:10+01:00</lastmod>
+        <lastmod>2014-07-03T18:35:31+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/tour-cpp-standard.html</loc>
-        <lastmod>2014-07-03T15:21:10+01:00</lastmod>
+        <lastmod>2014-07-03T19:36:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/</loc>
-        <lastmod>2014-07-03T15:21:10+01:00</lastmod>
+        <lastmod>2014-07-03T19:36:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/</loc>
-        <lastmod>2014-07-03T15:21:10+01:00</lastmod>
+        <lastmod>2014-07-03T19:36:40+01:00</lastmod>
     </url>
 </urlset>
