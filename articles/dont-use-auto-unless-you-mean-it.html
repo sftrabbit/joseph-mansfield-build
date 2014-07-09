@@ -91,12 +91,12 @@
 
 <p>This implies that any use of <code>best_candidate</code> only requires that it meets the requirements of an <code>InputIterator</code>. We are hiding away the actual type of the iterator, but not hiding the information that is actually important. On the other hand, <code>auto</code> hides everything. You can hopefully now see that the convention I have proposed unifies the declarations of both function arguments and variables:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">some_type</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must be some_type */</span><span class="p">;</span>
+<div class="highlight"><pre><code class="cpp"><span class="n">some_type</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must be convertible to some_type */</span><span class="p">;</span>
 <span class="n">SomeConcept</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must meet SomeConcept requirements */</span><span class="p">;</span>
 <span class="n">MoreGeneralConcept</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must meet MoreGeneralConcept requirements */</span><span class="p">;</span>
 <span class="k">auto</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* can be anything */</span><span class="p">;</span>
 
-<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">some_type</span><span class="p">);</span> <span class="c1">// must take some_type</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">some_type</span><span class="p">);</span> <span class="c1">// must take something convertible to some_type</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">SomeConcept</span><span class="p">);</span> <span class="c1">// must take something that meets SomeConcept requirements</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">MoreGeneralConcept</span><span class="p">);</span> <span class="c1">// must take something that meets MoreGeneralConcept requirements</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="k">auto</span><span class="p">);</span> <span class="c1">// can take anything</span></code></pre></div>
