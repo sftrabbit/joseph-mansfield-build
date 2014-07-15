@@ -8,7 +8,7 @@
     <title>Joseph Mansfield</title>
     <link>http://josephmansfield.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
-    <pubDate>Mon, 07 Jul 2014 00:00:00 +0100</pubDate>
+    <pubDate>Tue, 15 Jul 2014 00:00:00 +0100</pubDate>
     <item>
       <title>Marking as deprecated in C++14</title>
       <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
@@ -49,6 +49,14 @@
       <guid>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</guid>
       <dc:date>2014-07-07T00:00:00+01:00</dc:date>
     </item>
-    <dc:date>2014-07-07T00:00:00+01:00</dc:date>
+    <item>
+      <title>Exceptions, error codes, and assertions in C++</title>
+      <link>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</link>
+      <description>An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.</description>
+      <pubDate>Tue, 15 Jul 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</guid>
+      <dc:date>2014-07-15T00:00:00+01:00</dc:date>
+    </item>
+    <dc:date>2014-07-15T00:00:00+01:00</dc:date>
   </channel>
 </rss>
