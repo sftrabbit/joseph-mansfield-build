@@ -59,7 +59,6 @@
 						<p class="secondary" itemprop="description">The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</p>
 <p>It is common for entities in source code (functions, classes, etc.) to become obsolete or unsafe as the project undergoes development. It's a bad idea to remove those entities without any warning, as it'll break any other code that interfaces with those entities. Instead, it's good practice to mark them as <a href="http://en.wikipedia.org/wiki/Deprecation">deprecated</a> in an attempt to discourage their use.</p>
 <p>The upcoming C++ release, <a href="http://en.wikipedia.org/wiki/C%2B%2B14">C++14</a>, introduces the <code>deprecated</code> attribute for specifying that an entity is deprecated. The compiler can then emit warnings whenever these entities are being used. In general, attributes are given as a comma-separated list in double square brackets and can be used in various locations. For example, we can deprecate a function by placing the <code>deprecated</code> attribute at the very beginning of the function declaration:</p>
-<aside>Other existing attributes include <code>noreturn</code>, <code>carries_dependency</code>, and <code>alignas</code> (which has a different syntax).</aside>
 
 <div class="highlight"><pre><code class="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{};</span>
@@ -67,6 +66,8 @@
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="n">foo</span><span class="p">();</span> <span class="c1">// we&#39;re using a deprecated function</span>
 <span class="p">}</span></code></pre></div>
+
+<aside>Other existing attributes include <code>noreturn</code>, <code>carries_dependency</code>, and <code>alignas</code> (which has a different syntax).</aside>
 
 <p>Compiled with the latest build of <a href="http://clang.llvm.org/">clang</a>, this gives the following warning:</p>
 
