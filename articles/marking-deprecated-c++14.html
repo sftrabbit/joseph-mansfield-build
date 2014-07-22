@@ -61,7 +61,7 @@
 <p>The upcoming C++ release, <a href="http://en.wikipedia.org/wiki/C%2B%2B14">C++14</a>, introduces the <code>deprecated</code> attribute for specifying that an entity is deprecated. The compiler can then emit warnings whenever these entities are being used. In general, attributes are given as a comma-separated list in double square brackets and can be used in various locations. For example, we can deprecate a function by placing the <code>deprecated</code> attribute at the very beginning of the function declaration:</p>
 
 <div class="highlight"><pre><code class="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
-<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{};</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="n">foo</span><span class="p">();</span> <span class="c1">// we&#39;re using a deprecated function</span>
@@ -75,13 +75,13 @@
         foo();
         ^
 <span class="gn">note</span>: &#39;foo&#39; has been explicitly marked deprecated here
-void foo() {};
+void foo() {}
      ^</code></pre></div>
 
 <p>It is also possible to supply a message that may inform the users of the deprecated entity. This message must be given as a string literal in parentheses:
 
 <div class="highlight"><pre><code class="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">(</span><span class="s">&quot;use bar instead&quot;</span><span class="p">)]]</span>
-<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{};</span></code></pre></div>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span></code></pre></div>
 
 <p>This gives the following warning instead:</p>
 
@@ -89,7 +89,7 @@ void foo() {};
         foo();
         ^
 <span class="gn">note</span>: &#39;foo&#39; has been explicitly marked deprecated here
-void foo() {};
+void foo() {}
      ^</code></pre></div>
 
 <p>The <code>deprecated</code> attribute can also be applied to classes, typedefs, variables, non-static data members, enumerations, and template specializations. Here's a bunch of examples:</p>
