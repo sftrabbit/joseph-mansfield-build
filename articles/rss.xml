@@ -8,7 +8,7 @@
     <title>Joseph Mansfield</title>
     <link>http://josephmansfield.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
-    <pubDate>Tue, 15 Jul 2014 00:00:00 +0100</pubDate>
+    <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
     <item>
       <title>Marking as deprecated in C++14</title>
       <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
@@ -57,6 +57,14 @@
       <guid>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</guid>
       <dc:date>2014-07-15T00:00:00+01:00</dc:date>
     </item>
-    <dc:date>2014-07-15T00:00:00+01:00</dc:date>
+    <item>
+      <title>My Ludum Dare Experience</title>
+      <link>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</link>
+      <description>A look back at my first experience with Ludum Dare, a 48-hour accelerated game development competition.</description>
+      <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</guid>
+      <dc:date>2014-08-28T00:00:00+01:00</dc:date>
+    </item>
+    <dc:date>2014-08-28T00:00:00+01:00</dc:date>
   </channel>
 </rss>
