@@ -2,40 +2,44 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</loc>
-        <lastmod>2014-07-22T19:23:07+01:00</lastmod>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</loc>
-        <lastmod>2014-07-07T22:12:44+01:00</lastmod>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
     </url>
     <url>
         <loc>
             http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html
         </loc>
-        <lastmod>2014-07-07T22:12:44+01:00</lastmod>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/tour-cpp-standard.html</loc>
-        <lastmod>2014-07-08T00:45:11+01:00</lastmod>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</loc>
-        <lastmod>2014-07-10T14:55:20+01:00</lastmod>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</loc>
-        <lastmod>2014-07-16T11:33:09+01:00</lastmod>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</loc>
-        <lastmod>2014-08-30T12:44:28+01:00</lastmod>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
+    </url>
+    <url>
+        <loc>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</loc>
+        <lastmod>2014-09-18T21:59:40+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/articles/</loc>
-        <lastmod>2014-08-30T12:44:28+01:00</lastmod>
+        <lastmod>2014-09-18T21:49:03+01:00</lastmod>
     </url>
     <url>
         <loc>http://josephmansfield.uk/</loc>
-        <lastmod>2014-08-30T12:44:28+01:00</lastmod>
+        <lastmod>2014-09-18T21:49:03+01:00</lastmod>
     </url>
 </urlset>

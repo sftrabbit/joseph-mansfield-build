@@ -8,7 +8,7 @@
     <title>Joseph Mansfield</title>
     <link>http://josephmansfield.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
-    <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
+    <pubDate>Wed, 17 Sep 2014 00:00:00 +0100</pubDate>
     <item>
       <title>Marking as deprecated in C++14</title>
       <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
@@ -65,6 +65,14 @@
       <guid>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</guid>
       <dc:date>2014-08-28T00:00:00+01:00</dc:date>
     </item>
-    <dc:date>2014-08-28T00:00:00+01:00</dc:date>
+    <item>
+      <title>C++ sequenced-before graphs</title>
+      <link>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</link>
+      <description>A visual method for identifying and understanding undefined behavior in expressions.</description>
+      <pubDate>Wed, 17 Sep 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</guid>
+      <dc:date>2014-09-17T00:00:00+01:00</dc:date>
+    </item>
+    <dc:date>2014-09-17T00:00:00+01:00</dc:date>
   </channel>
 </rss>
