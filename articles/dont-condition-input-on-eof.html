@@ -1,0 +1,248 @@
+<!doctype html>
+<html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#" lang="en">
+	<head>
+		<title>Don't condition input on eof() – Joseph Mansfield</title>
+		<meta charset="utf-8">
+		<meta name="description" content="File input is often mishandled in C++. Find out why conditioning on <code>eof()</code> might not do what you expect, and learn the correct, idiomatic approach to validating input.">
+		<meta name="author" content="Joseph Mansfield">
+		<meta name="viewport" content="width=device-width,user-scalable=no">
+		<link rel="author" href="http://josephmansfield.uk">
+		<link rel="logo" type="image/svg" href="/images/logo.svg">
+		<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
+		<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
+		<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+		<link rel="stylesheet" href="/styles/screen.css">
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Open+Sans:400italic,700italic,400,700|Ubuntu+Mono">
+
+		<meta name="twitter:card" content="summary">
+		<meta name="twitter:creator" content="@sftrabbit">
+		<meta property="og:title" content="Don't condition input on eof()">
+		<meta property="og:site_name" content="Joseph Mansfield">
+		<meta property="og:url" content="http://josephmansfield.uk/articles/dont-condition-input-on-eof.html">
+		<meta property="og:description" content="File input is often mishandled in C++. Find out why conditioning on <code>eof()</code> might not do what you expect, and learn the correct, idiomatic approach to validating input.">
+		<meta property="og:image" content="http://josephmansfield.uk/images/logo.png">
+		<meta property="fb:app_id" content="526696677453668">
+
+		<meta property="og:type" content="article">
+		<meta property="article:author" content="Joseph Mansfield">
+	</head>
+	<body>
+		<header>
+			<div class="container">
+				<a class="contentskip" href="#content">Skip to content</a>
+
+				<a class="title" href="/">
+					<img src="/images/header-icon.svg" alt="">
+					<h1>Joseph Mansfield</h1>	
+				</a>
+
+
+				<ul class="related-resources">
+					<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-white.svg" alt="GitHub"></a></li>
+					<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-white.svg" alt="Stack Overflow"></a></li>
+					<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-white.svg" alt="Twitter"></a></li>
+					<li><a href="https://plus.google.com/+JosephMansfield" title="Google+" rel="external"><img src="/images/gplus-white.svg" alt="Google+"></a></li>
+					<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-white.svg" alt="LinkedIn"></a></li>
+				</ul>
+			</div>
+		</header>
+
+		<main id="content">
+			<div class="container">
+				<article class="row" itemscope itemtype="http://schema.org/TechArticle">
+					<div class="column-2">
+						<header>
+							<h1 itemprop="name">Don't condition input on <code>eof()</code></h1>
+						</header>
+						<p class="secondary" itemprop="description">File input is often mishandled in C++. Find out why conditioning on <code>eof()</code> might not do what you expect, and learn the correct, idiomatic approach to validating input.</p>
+<p>New C++ developers often learn the following incorrect pattern for reading from a file:</p>
+
+<div class="highlight"><pre><code class="cpp"><span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">file</span><span class="p">.</span><span class="n">eof</span><span class="p">())</span> <span class="p">{</span>
+  <span class="c1">// Read data from file</span>
+  <span class="c1">// Process data</span>
+<span class="p">}</span></code></pre></div>
+
+<p>At first glance, it seems to make sense &mdash; if I haven't reached the end of the file, I can keep reading from it &mdash; but this logic is wrong. The fundamental issue is simple: the <abbr title="End of File">EOF</abbr> bit not being set does not necessarily imply that reading from the file will succeed. This often occurs when looping over lines (or other delimited elements) in a file, in which case an extra iteration occurs and one of two common symptoms is observed:</p>
+<ul>
+	<li>There appears to be an extra blank line in the file.</li>
+	<li>The last line of the file appears to be processed twice.</li>
+</ul>
+<p>This problem raises an interesting question. If we know that we've read the last line of a file with <a href="http://en.cppreference.com/w/cpp/string/basic_string/getline"><code>std::getline</code></a>, why does the EOF bit not get set and prevent us from iterating again? Surely we have reached the end of the file. Why would it continue only to fail at the next attempt to read?</p>
+<p>The EOF bit is only set if you actually attempt to read anything beyond the end of the file. That is, if you were to call <a href="http://en.cppreference.com/w/cpp/io/basic_istream/get"><code>file.get()</code></a>, which extracts only a single character, reading the last character would not set the EOF bit, but the next call would. This doesn't fully answer the question, however, because some functions actually read one character beyond the data they extract. For example, <code>std::cin >> x</code>, where <code>x</code> is an <code>int</code>, discards any initial whitespace, and then will read up to and including a non-digit. The non-digit is not extracted, but it is read in order to determine that it should stop. Similarly, <code>std::getline</code> will read up to and including a newline character. These functions will also stop if they attempt to read beyond the end of the file. So the question remains &mdash; if we're reading the last line of a file with <code>std::getline</code>, why does it not attempt to read past the end of the file and therefore set the EOF bit?</p>
+<p>The answer is simple, but not immediately apparent: all lines in a text file end with a newline character &mdash; even the last line. In many text editors, this is not obvious because the last line doesn't appear to have a newline character following it, but it's there. There are <a href="http://stackoverflow.com/q/729692/150634">many reasons for this</a>, but it has unfortunate consequences for our <code>!file.eof()</code> loop. Consider the following file:</p>
+
+<div class="highlight"><pre><code class="text">Today I pass the time reading 
+a favorite haiku, 
+saying the few words over and over.</code></pre></div>
+
+<p>If we render the newline characters, it looks something like this:</p>
+
+<div class="highlight"><pre><code class="text">Today I pass the time reading\n
+a favorite haiku,\n
+saying the few words over and over.\n</code></pre></div>
+
+<p>Now, if we're iterating through this file, reading each line with <code>std::getline</code>, what happens when we read the last line? <code>std::getline</code> will read up to and including the final newline character and then return. It won't attempt to read beyond the end of the file. The EOF bit won't be set. If we are conditioned on <code>eof()</code>, we will start another iteration with nothing left to read.</p>
+<p>The same is true if we're extracting formatted data with <code>&gt;&gt;</code>. The last extraction will stop at the newline character and the EOF bit will not be set. There is no more data left to extract. In this case, it often appears that the last set of data is duplicated because the objects we are extracting into retain their values from the previous iteration.</p>
+<p>Of course, these operations are not specific to files. Any kind of input stream will exhibit the same behavior. The newline character at the end of files is frequently the cause of this problem, but conditioning on <code>eof()</code> is flawed regardless. It simply cannot tell if the following input will succeed or not. Any other I/O problems will also be ignored, since <code>eof()</code> only tells you if the EOF bit is set and not any of the other failure bits. This can lead to infinite loops.</p>
+<p>The correct and idiomatic approach to read from a stream is to condition on the success of the read itself. In this way, we attempt to extract the input and handle it appropriately if it fails. This means that you can stop at the right time and report problems to the user if necessary (if the stream data was incorrect). To loop over all lines in a file, for example, you should use the following:</p>
+
+<div class="highlight"><pre><code class="cpp"><span class="k">while</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="p">{</span>
+  <span class="c1">// Process the line</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Now we know for certain that the read succeeded before starting a new iteration of the loop. This also protects us against any other I/O problems that might cause it to fail. In fact, this pattern works everywhere, and should be used to validate any kind of input, even if you're not looping over it. For example, if you want to get some details about the user:</p>
+
+<div class="highlight"><pre><code class="cpp"><span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">first_name</span> <span class="o">&amp;&amp;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">family_name</span> <span class="o">&amp;&amp;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">age</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Success</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="c1">// Failure</span>
+<span class="p">}</span></code></pre></div>
+
+<p>The <code>&&</code>s ensure that each input operation succeeds before attempting the next one and that all must succeed in order to enter the success branch.</p>
+<p>In practice, user input and data files tend to require a combination of these approaches. For example, they are often organised in structured lines. in which case I recommend looping conditioned on <code>std::getline</code> and then parsing each line individually. Inside the loop, you can put the line into a <a href="http://en.cppreference.com/w/cpp/io/basic_stringstream"><code>std::stringstream</code></a> and extract the individual items of data from that. You can validate those extractions with an <code>if</code> statement as in the previous example.</p>
+<p>The <code>!file.eof()</code> anti-pattern is still seen often, even in C++ tutorials and other teaching materials. As we have seen, <code>eof()</code> only tells if you've already attempted to read past the end of a file, which is rarely what you really want to check for. Instead, we can easily condition on the success of the extraction, which ensures that we only continue processing if it succeeds. This pattern helps us write robust input handling for all kinds of streams and should be used even when <code>!file.eof()</code> <em>appears</em> to work.</p>
+
+					</div>
+					<div class="column-1">
+
+						<ins class="adsbygoogle josephmansfield-article-side" data-ad-client="ca-pub-6789411983750873" data-ad-slot="7401738733"></ins>
+
+						<footer>
+							<img class="author-photo" src="http://www.gravatar.com/avatar/9f438bc04462ee5af4132921a3474842.png?s=128" alt="Joseph Mansfield">
+							<p class="author">Written by <a class="author-name" href="/" rel="author" itemprop="author">Joseph Mansfield</a></p>
+							<ul class="related-resources">
+								<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-color.svg" alt="GitHub"></a></li>
+								<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-color.svg" alt="Stack Overflow"></a></li>
+								<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-color.svg" alt="Twitter"></a></li>
+								<li><a href="https://plus.google.com/+JosephMansfield?rel=author" title="Google+" rel="external"><img src="/images/gplus-color.svg" alt="Google+"></a></li>
+								<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-color.svg" alt="LinkedIn"></a></li>
+							</ul>
+
+							<p><small>Notice any mistakes? <a href="https://github.com/sftrabbit/JosephMansfieldArticles/blob/master/2014-11-29-dont-condition-input-on-eof.html">Fork the article on GitHub</a>.</small></p>
+						</footer>
+					</div>
+				</article>
+
+				<div class="row">
+					<div class="column-2">
+						<ins class="adsbygoogle josephmansfield-article-bottom" data-ad-client="ca-pub-6789411983750873" data-ad-slot="2589226334"></ins>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="column-2">
+						<div id="disqus_thread"></div>
+					</div>
+					<section class="column-1">
+						<h1>Share this article</h1>
+						<ul class="share-buttons">
+							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-height="24">Share on Google+</div></li>
+							<li><a href="https://twitter.com/share" class="twitter-share-button" data-text="Don't condition input on eof()" data-size="large" data-via="sftrabbit">Share on Twitter</a></li>
+							<li class="facebook"><div class="fb-like" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div></li>
+							<li><script type="text/javascript" src="http://www.reddit.com/static/button/button1.js"></script></li>
+						</ul>
+					</section>
+				</div>
+			</div>
+			<div class="alt">
+				<div class="container">
+					<div class="row">
+
+
+						<section class="column-2">
+							<h1>Want something else to read?</h1>
+									<article>
+										<h1><a href="/articles/exceptions-error-codes-assertions-c++.html">Exceptions, error codes, and assertions in C++</a></h1>
+										<p class="secondary">An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.</p>
+										<p><a href="/articles/exceptions-error-codes-assertions-c++.html">Read this C++ article →</a></p>
+									</article>
+
+						</section>
+
+						<section class="column-1">
+							<h1><img src="//feedburner.google.com/fb/images/pub/feed-icon16x16.png" alt=""> Hear about new articles</h1>
+							<p class="secondary">Subscribe to <a href="http://feeds.feedburner.com/JosephMansfield" rel="alternate external" type="application/rss+xml">the RSS feed</a> with your favourite news feed reader.</p>
+						</section>
+					</div>
+					<div class="row">
+						<div class="column-2">
+							<p><a class="button" href="/articles/">More articles…</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer>
+			<div class="container">
+				<div class="row">
+					<div class="column-2">
+						<p>&copy; Joseph Mansfield. Content licensed under a <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external"><abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr></a> license.</p>
+
+					</div>
+					<div class="column-1 social-buttons">
+						<div><a href="https://twitter.com/sftrabbit" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sftrabbit</a></div>
+						<div class="g-follow" data-height="24" data-href="https://plus.google.com/+JosephMansfield" data-rel="author"></div>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+
+		<div id="fb-root"></div>
+		<script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script>
+
+		<script async>
+(function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-17335804-2', 'auto');
+ga('send', 'pageview');
+
+
+adsbygoogle = window.adsbygoogle || [];
+adsbygoogle.push({});
+adsbygoogle.push({});
+
+(function() {
+  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+  po.src = 'https://apis.google.com/js/plusone.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&appId=526696677453668&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+var disqus_shortname = 'josephmansfield';
+var disqus_identifier = '/articles/dont-condition-input-on-eof';
+var disqus_title = "Don't condition input on eof()";
+
+(function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+
+
+		</script>
+
+	</body>
+</html>
