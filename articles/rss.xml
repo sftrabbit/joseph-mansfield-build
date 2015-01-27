@@ -8,7 +8,7 @@
     <title>Joseph Mansfield</title>
     <link>http://josephmansfield.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
-    <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
+    <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
     <item>
       <title>Marking as deprecated in C++14</title>
       <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
@@ -89,6 +89,14 @@
       <guid>http://josephmansfield.uk/articles/need-value-pass-by-value.html</guid>
       <dc:date>2014-12-23T00:00:00+00:00</dc:date>
     </item>
-    <dc:date>2014-12-23T00:00:00+00:00</dc:date>
+    <item>
+      <title>The lvalue/rvalue metaphor</title>
+      <link>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</link>
+      <description>A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.</description>
+      <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
+      <guid>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</guid>
+      <dc:date>2015-01-26T00:00:00+00:00</dc:date>
+    </item>
+    <dc:date>2015-01-26T00:00:00+00:00</dc:date>
   </channel>
 </rss>
