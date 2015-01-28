@@ -10,76 +10,12 @@
     <description>RSS feed for Joseph Mansfield</description>
     <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
     <item>
-      <title>Marking as deprecated in C++14</title>
-      <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
-      <description>The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</description>
-      <pubDate>Mon, 09 Jun 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</guid>
-      <dc:date>2014-06-09T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>Ambiguous raw pointers</title>
-      <link>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</link>
-      <description>A look at the properties of raw pointers, an abundant source of bugs and confusion for C++ programmers, that make them unsuitable for modern code.</description>
-      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</guid>
-      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>Custom syntax highlighting with Jekyll and Pygments</title>
-      <link>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</link>
-      <description>Learn how to customize the behavior of the Jekyll's built-in syntax highlighting with Pygments, which doesn't always come out the way you want it.</description>
-      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</guid>
-      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>A tour of the C++ standard</title>
-      <link>http://josephmansfield.uk/articles/tour-cpp-standard.html</link>
-      <description>A structural overview of the ISO C++ standard, serving as an introduction to the document for new C++ programmers.</description>
-      <pubDate>Thu, 03 Jul 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/tour-cpp-standard.html</guid>
-      <dc:date>2014-07-03T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>Don't use auto unless you mean it</title>
-      <link>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</link>
-      <description>A unified, forward-thinking convention for using the auto keyword in C++: auto means anything. Learn when you should and should not use it.</description>
-      <pubDate>Mon, 07 Jul 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</guid>
-      <dc:date>2014-07-07T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>Exceptions, error codes, and assertions in C++</title>
-      <link>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</link>
-      <description>An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.</description>
-      <pubDate>Tue, 15 Jul 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</guid>
-      <dc:date>2014-07-15T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>My Ludum Dare Experience</title>
-      <link>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</link>
-      <description>A look back at my first experience with Ludum Dare, a 48-hour accelerated game development competition.</description>
-      <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</guid>
-      <dc:date>2014-08-28T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>C++ sequenced-before graphs</title>
-      <link>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</link>
-      <description>A visual method for identifying and understanding undefined behavior in expressions.</description>
-      <pubDate>Wed, 17 Sep 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</guid>
-      <dc:date>2014-09-17T00:00:00+01:00</dc:date>
-    </item>
-    <item>
-      <title>Don't condition input on eof()</title>
-      <link>http://josephmansfield.uk/articles/dont-condition-input-on-eof.html</link>
-      <description>File input is often mishandled in C++. Find out why conditioning on eof() might not do what you expect, and learn the correct, idiomatic approach to validating input.</description>
-      <pubDate>Sat, 29 Nov 2014 00:00:00 +0000</pubDate>
-      <guid>http://josephmansfield.uk/articles/dont-condition-input-on-eof.html</guid>
-      <dc:date>2014-11-29T00:00:00+00:00</dc:date>
+      <title>The lvalue/rvalue metaphor</title>
+      <link>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</link>
+      <description>A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.</description>
+      <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
+      <guid>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</guid>
+      <dc:date>2015-01-26T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>Need a value? Pass by value</title>
@@ -90,12 +26,76 @@
       <dc:date>2014-12-23T00:00:00+00:00</dc:date>
     </item>
     <item>
-      <title>The lvalue/rvalue metaphor</title>
-      <link>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</link>
-      <description>A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.</description>
-      <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
-      <guid>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</guid>
-      <dc:date>2015-01-26T00:00:00+00:00</dc:date>
+      <title>Don't condition input on eof()</title>
+      <link>http://josephmansfield.uk/articles/dont-condition-input-on-eof.html</link>
+      <description>File input is often mishandled in C++. Find out why conditioning on eof() might not do what you expect, and learn the correct, idiomatic approach to validating input.</description>
+      <pubDate>Sat, 29 Nov 2014 00:00:00 +0000</pubDate>
+      <guid>http://josephmansfield.uk/articles/dont-condition-input-on-eof.html</guid>
+      <dc:date>2014-11-29T00:00:00+00:00</dc:date>
+    </item>
+    <item>
+      <title>C++ sequenced-before graphs</title>
+      <link>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</link>
+      <description>A visual method for identifying and understanding undefined behavior in expressions.</description>
+      <pubDate>Wed, 17 Sep 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</guid>
+      <dc:date>2014-09-17T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>My Ludum Dare Experience</title>
+      <link>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</link>
+      <description>A look back at my first experience with Ludum Dare, a 48-hour accelerated game development competition.</description>
+      <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</guid>
+      <dc:date>2014-08-28T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>Exceptions, error codes, and assertions in C++</title>
+      <link>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</link>
+      <description>An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.</description>
+      <pubDate>Tue, 15 Jul 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</guid>
+      <dc:date>2014-07-15T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>Don't use auto unless you mean it</title>
+      <link>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</link>
+      <description>A unified, forward-thinking convention for using the auto keyword in C++: auto means anything. Learn when you should and should not use it.</description>
+      <pubDate>Mon, 07 Jul 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</guid>
+      <dc:date>2014-07-07T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>A tour of the C++ standard</title>
+      <link>http://josephmansfield.uk/articles/tour-cpp-standard.html</link>
+      <description>A structural overview of the ISO C++ standard, serving as an introduction to the document for new C++ programmers.</description>
+      <pubDate>Thu, 03 Jul 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/tour-cpp-standard.html</guid>
+      <dc:date>2014-07-03T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>Custom syntax highlighting with Jekyll and Pygments</title>
+      <link>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</link>
+      <description>Learn how to customize the behavior of the Jekyll's built-in syntax highlighting with Pygments, which doesn't always come out the way you want it.</description>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</guid>
+      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>Ambiguous raw pointers</title>
+      <link>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</link>
+      <description>A look at the properties of raw pointers, an abundant source of bugs and confusion for C++ programmers, that make them unsuitable for modern code.</description>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</guid>
+      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
+    </item>
+    <item>
+      <title>Marking as deprecated in C++14</title>
+      <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
+      <description>The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</description>
+      <pubDate>Mon, 09 Jun 2014 00:00:00 +0100</pubDate>
+      <guid>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</guid>
+      <dc:date>2014-06-09T00:00:00+01:00</dc:date>
     </item>
     <dc:date>2015-01-26T00:00:00+00:00</dc:date>
   </channel>
