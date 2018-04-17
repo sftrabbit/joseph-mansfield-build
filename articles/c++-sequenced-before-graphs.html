@@ -1,61 +1,68 @@
 <!doctype html>
 <html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#" lang="en">
-	<head>
-		<title>C++ sequenced-before graphs – Joseph Mansfield</title>
-		<meta charset="utf-8">
-		<meta name="description" content="A visual method for identifying and understanding undefined behavior in expressions.">
-		<meta name="author" content="Joseph Mansfield">
-		<meta name="viewport" content="width=device-width,user-scalable=no">
-		<link rel="author" href="http://josephmansfield.uk">
-		<link rel="logo" type="image/svg" href="/images/logo.svg">
-		<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
-		<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
-		<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-		<link rel="stylesheet" href="/styles/screen.css">
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Roboto+Slab|Ubuntu+Mono">
+  <head>
+    <title>
+      
+        C++ sequenced-before graphs —
+      
+      Joseph Mansfield
+    </title>
+    <meta charset="utf-8">
 
-		<meta name="twitter:card" content="summary">
-		<meta name="twitter:creator" content="@sftrabbit">
-		<meta property="og:title" content="C++ sequenced-before graphs">
-		<meta property="og:site_name" content="Joseph Mansfield">
-		<meta property="og:url" content="http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html">
-		<meta property="og:description" content="A visual method for identifying and understanding undefined behavior in expressions.">
-		<meta property="og:image" content="http://josephmansfield.uk/images/logo.png">
-		<meta property="fb:app_id" content="526696677453668">
+  <meta name="description" content="A visual method for identifying and understanding undefined behavior in expressions.">
 
-		<meta property="og:type" content="article">
-		<meta property="article:author" content="Joseph Mansfield">
-	</head>
-	<body>
-		<header>
-			<div class="container">
-				<a class="contentskip" href="#content">Skip to content</a>
+<meta name="author" content="Joseph Mansfield">
+<meta name="viewport" content="width=device-width,user-scalable=no">
+<link rel="author" href="https://josephmansfield.uk">
+<link rel="logo" type="image/svg" href="/images/logo.svg">
+<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
+<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<link rel="stylesheet" href="/styles/screen.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Ubuntu+Mono">
 
-				<a class="title" href="/">
-					<img src="/images/header-icon.svg" alt="">
-					<h1>Joseph Mansfield</h1>	
-				</a>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@sftrabbit">
+<meta property="og:title" content="C++ sequenced-before graphs">
+<meta property="og:site_name" content="Joseph Mansfield">
+<meta property="og:url" content="https://josephmansfield.uk/articles/c++-sequenced-before-graphs.html">
+<meta property="og:description" content="A visual method for identifying and understanding undefined behavior in expressions.">
+<meta property="og:image" content="https://josephmansfield.uk/images/logo.png">
+<meta property="fb:app_id" content="526696677453668">
 
+  </head>
+  <body>
+    <div class="container">
+      <header><a class="contentskip" href="#content">Skip to content</a>
 
-				<ul class="related-resources">
-					<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-white.svg" alt="GitHub"></a></li>
-					<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-white.svg" alt="Stack Overflow"></a></li>
-					<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-white.svg" alt="Twitter"></a></li>
-					<li><a href="https://plus.google.com/+JosephMansfield" title="Google+" rel="external"><img src="/images/gplus-white.svg" alt="Google+"></a></li>
-					<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-white.svg" alt="LinkedIn"></a></li>
-				</ul>
-			</div>
-		</header>
+  <a class="title" href="/">
+    <img src="/images/header-icon.svg" alt="">
+    <h1>Joseph Mansfield</h1>
+  </a>
+  
 
-		<main id="content">
-			<div class="container">
-				<article class="row" itemscope itemtype="http://schema.org/TechArticle">
-					<div class="column-2">
-						<header>
-							<h1 itemprop="name">C++ sequenced-before graphs</h1>
-						</header>
-						<p class="secondary" itemprop="description">A visual method for identifying and understanding undefined behavior in expressions.</p>
-<div class="highlight"><pre><code class="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></div>
+<ul class="related-resources">
+  <li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external">@sftrabbit</a></li>
+  <li><a href="https://github.com/sftrabbit" title="GitHub" rel="external">GitHub</a></li>
+</ul>
+</header>
+      <main>
+        
+          <hgroup>
+            <h1>C++ sequenced-before graphs</h1>
+            
+              <h2>
+                <time datetime="2014-09-17 00:00:00 +0100">
+                  
+                  17th
+                  
+                  September 2014
+                </time>
+              </h2>
+            
+          </hgroup>
+        
+        <figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
 
 <p>This expression, and many like it, demonstrate the sequencing rules of C++ and how they can cause your program to behave in ways you might not expect. What should the result of this expression be given some initial value for <code>i</code>? Questions like this are extremely frequent on <a href="http://stackoverflow.com/questions/tagged/c++">Stack Overflow</a>. In this case, the answer is that this code is completely undefined &mdash; it could do anything. Literally anything (at least formally speaking).</p>
 <p>The C++ standard defines an execution path according to your code. Given particular inputs, the program will always follow this execution path. Sometimes, the standard allows multiple possible execution paths for your program. This gives compilers extra freedom to optimize in various ways. When the standard allows a particular set of possible paths, this is known as <dfn>unspecified behavior</dfn>. In other cases, the standard gives absolutely no requirements about the behavior of your program, and this is known as <dfn>undefined behavior</dfn>. Undefined behavior is certainly not something you want in your code.</p>
@@ -73,16 +80,16 @@
 </ul>
 <p>The rules that define when the sequenced-before relationship exists between two evaluations inherently form an acyclic directed graph structure. As an example, let’s consider the earlier line of code once again:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
 
 <p>Let's first split it up into its subexpressions. The full expression is the assignment, which has two operands. The left operand is just <code>i</code>, while the right operand is <code>i++</code> which itself has <code>i</code> as an operand. The following tree represents this structure, where the arrows represent the sequenced-before relationship of the value computations of those subexpressions:</p>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/subexpressions.png" alt="The subexpression tree of i = i++."></figure>
+<figure><img src="/media/images/sequencing-graphs/subexpressions.png" alt="The subexpression tree of i = i++."></figure>
 <p>Both the assignment and the increment have side effects (i.e. they modify the value of an object). We know how they are sequenced with respect to the value computations by looking at the above sequencing rules. The assignment comes after the value computation of its operands and before its own value computation. The increment comes after its value computation, but is not sequenced-before the assignment. If we add them as red nodes, we have:</p>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/side-effects.png" alt="The almost-complete sequenced-before graph for i = i++."></figure>
+<figure><img src="/media/images/sequencing-graphs/side-effects.png" alt="The almost-complete sequenced-before graph for i = i++."></figure>
 <p>We can read this graph as flowing chronologically upwards. For the purposes of determining undefined behavior, we also need to identify any value computations that <em>use the value of an object</em>. This is quite a subtle point, but only value computations of expressions denoting objects (like <code>i</code>) that are being used where an rvalue is expected are value computations that use the value of an object. When such an expression is used where an lvalue is expected instead, its value is not important, as in the left operand of <code>=</code>.</p>
 <aside>For those who want to read more, look up <a href="http://en.cppreference.com/w/cpp/language/value_category">value categories</a>. The left operand of <code>=</code> is an lvalue, which means that we don't care about its value. Lvalue-to-rvalue conversion can be thought of as reading the value from an object.</aside>
 <p>If we highlight value computations that use the value of objects in blue, we get:</p>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/postincrement.png" alt="An annotated sequenced-before graph for i = i++."></figure>
+<figure><img src="/media/images/sequencing-graphs/postincrement.png" alt="An annotated sequenced-before graph for i = i++."></figure>
 <p>Notice the interesting placement of the <code>i</code> increment &mdash; nothing else is sequenced after it, so it could even occur after the assignment. Herein lies the undefined behaviour. Depending on whether the increment occurs before or after the assignment, we could get different results.</p>
 <p>To determine whether an expression might be undefined, we can simply look at its graph. Two evaluations in different branches are completely unsequenced (that is, if there is no directed path between them). The standard states that we have undefined behaviour if: we have <b>two side effects on the same scalar object that are unsequenced</b>; or we have <b>a side effect on a scalar object and a value computation using the value of the same object that are unsequenced</b>. In the above graph, I have connected the problematic pair of evaluations with a dotted line &mdash; two unsequenced side effects.</p>
 <p>As you can see, this gives a great way to visualize the sequencing rules as applied to a particular expression and makes it much easier to see why certain expressions might result in undefined behaviour.</p>
@@ -90,33 +97,33 @@
 
 <hr>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">i</span> <span class="o">=</span> <span class="o">++</span><span class="n">i</span></code></pre></div>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/preincrement.png" alt="An sequenced-before graph for i = ++i."></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="o">++</span><span class="n">i</span></code></pre></figure>
+<figure><img src="/media/images/sequencing-graphs/preincrement.png" alt="An sequenced-before graph for i = ++i."></figure>
 <p>It is interesting to see that by merely switching the postfix increment to a prefix increment, this expression has become well-defined. That’s because the increment of <code>i</code> has to occur before the value computation of the increment expression and, therefore, before the assignment to <code>i</code>.</p>
 <aside>Before C++11, this was actually considered undefined, despite having only one possible result.</aside>
 
 <hr>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span> <span class="o">+</span> <span class="n">i</span><span class="o">++</span></code></pre></div>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/complex.png" alt="An sequenced-before graph for i = i++ + i++."></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span> <span class="o">+</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
+<figure><img src="/media/images/sequencing-graphs/complex.png" alt="An sequenced-before graph for i = i++ + i++."></figure>
 <p>This is a slightly more complex adaptation of the expression we first looked at. It seems to be quite a popular example. It has undefined behaviour for the same reasons, but also exhibits unsequenced side effects and value computations between the two increments. In the same way, <code>i++ + i++</code> alone is undefined.</p>
 
 <hr>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span></code></pre></div>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/subscript.png" alt="An sequenced-before graph for i = v[i++]."></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span></code></pre></figure>
+<figure><img src="/media/images/sequencing-graphs/subscript.png" alt="An sequenced-before graph for i = v[i++]."></figure>
 <p>This one tends to be hard for many to grasp, although its problem is exactly the same as the previous examples. I suspect that most people think of <code>i++</code> as an operation that “returns the value of <code>i</code>, then increments <code>i</code>.” The problem is that the increment can happen at any point, and might happen after the assignment to <code>i</code>. The fact that we're using it as a subscript doesn't change anything.</p>
 
 <hr>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">i</span><span class="o">++</span> <span class="o">||</span> <span class="n">i</span><span class="o">++</span></code></pre></div>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/logical-or.png" alt="An sequenced-before graph for i++ || i++."></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span><span class="o">++</span> <span class="o">||</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
+<figure><img src="/media/images/sequencing-graphs/logical-or.png" alt="An sequenced-before graph for i++ || i++."></figure>
 <p>This demonstrates the ability of some operators (namely <code>||</code>, <code>&&</code>, and <code>,</code>) to enforce sequencing between their operands. The standard states that every value computation and side effect associated with the left operand is sequenced before those of the right operand.</p>
 
 <hr>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">f</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span></code></pre></div>
-<figure><img src="http://josephmansfield.uk/media/images/sequencing-graphs/function.png" alt="An sequenced-before graph for f(i = 1, i = 2)."></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">f</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span></code></pre></figure>
+<figure><img src="/media/images/sequencing-graphs/function.png" alt="An sequenced-before graph for f(i = 1, i = 2)."></figure>
 <p>Here we’re calling a function and in each argument we’re assigning a different value to <code>i</code>. The evaluations of function arguments are also unsequenced, so we cannot say what the value of <code>i</code> will be after this expression has been evaluated.</p>
 
 <hr>
@@ -126,103 +133,21 @@
 <p>Finally, it is not always enough to look at the identifiers in expressions. Previously, we noted that an object <code>i</code> was modified in two parts of an expression. However, it’s possible to have two different identifiers, say <code>i</code> and <code>j</code>, that either refer to the same scalar object or are more complex data types that have a shared scalar object that they modify. Keep this in mind.</p>
 <p>Next time you come across a complex expression (which is hopefully not very often), you now have a great way to analyse the sequencing of evaluations and determine the possible execution paths of that expression. Perhaps this might reduce the number of questions on Stack Overflow about this topic, but if not, at least it gives a nice visual way to answer them.</p>
 
-					</div>
-					<div class="column-1">
-
-						<ins class="adsbygoogle josephmansfield-article-side" data-ad-client="ca-pub-6789411983750873" data-ad-slot="7401738733"></ins>
-
-						<footer>
-							<img class="author-photo" src="http://www.gravatar.com/avatar/9f438bc04462ee5af4132921a3474842.png?s=128" alt="Joseph Mansfield">
-							<p class="author">Written by <a class="author-name" href="/" rel="author" itemprop="author">Joseph Mansfield</a></p>
-							<ul class="related-resources">
-								<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-color.svg" alt="GitHub"></a></li>
-								<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-color.svg" alt="Stack Overflow"></a></li>
-								<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-color.svg" alt="Twitter"></a></li>
-								<li><a href="https://plus.google.com/+JosephMansfield?rel=author" title="Google+" rel="external"><img src="/images/gplus-color.svg" alt="Google+"></a></li>
-								<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-color.svg" alt="LinkedIn"></a></li>
-							</ul>
-
-							<p><small>Notice any mistakes? <a href="https://github.com/sftrabbit/JosephMansfieldArticles/blob/master/2014-09-17-c++-sequenced-before-graphs.html">Fork the article on GitHub</a>.</small></p>
-						</footer>
-					</div>
-				</article>
-
-				<div class="row">
-					<div class="column-2">
-						<ins class="adsbygoogle josephmansfield-article-bottom" data-ad-client="ca-pub-6789411983750873" data-ad-slot="2589226334"></ins>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="column-2">
-						<div id="disqus_thread"></div>
-					</div>
-					<section class="column-1">
-						<h1>Share this article</h1>
-						<ul class="share-buttons">
-							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-height="24">Share on Google+</div></li>
-							<li><a href="https://twitter.com/share" class="twitter-share-button" data-text="C++ sequenced-before graphs" data-size="large" data-via="sftrabbit">Share on Twitter</a></li>
-							<li class="facebook"><div class="fb-like" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div></li>
-						</ul>
-					</section>
-				</div>
-			</div>
-			<div class="alt">
-				<div class="container">
-					<div class="row">
-
-
-						<section class="column-2">
-							<h1>Want something else to read?</h1>
-									<article>
-										<h1><a href="/articles/lvalue-rvalue-metaphor.html">The lvalue/rvalue metaphor</a></h1>
-										<p class="secondary">A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.</p>
-										<p><a href="/articles/lvalue-rvalue-metaphor.html">Read this C++ article →</a></p>
-									</article>
-
-						</section>
-
-						<section class="column-1">
-							<h1><img src="//feedburner.google.com/fb/images/pub/feed-icon16x16.png" alt=""> Hear about new articles</h1>
-							<p class="secondary">Subscribe to <a href="http://feeds.feedburner.com/JosephMansfield" rel="alternate external" type="application/rss+xml">the RSS feed</a> with your favourite news feed reader.</p>
-						</section>
-					</div>
-					<div class="row">
-						<div class="column-2">
-							<p><a class="button" href="/articles/">More articles…</a></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-		<footer>
-			<div class="container">
-				<div class="row">
-					<div class="column-2">
-						<p>&copy; Joseph Mansfield. Content licensed under a <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external"><abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr></a> license.</p>
-
-					</div>
-					<div class="column-1 social-buttons">
-						<div><a href="https://twitter.com/sftrabbit" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sftrabbit</a></div>
-						<div class="g-follow" data-height="24" data-href="https://plus.google.com/+JosephMansfield" data-rel="author"></div>
-					</div>
-				</div>
-			</div>
-		</footer>
-
-
-		<div id="fb-root"></div>
-		<script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script>
-
-		<script async>
-(function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-
+        
+          <div id="disqus_thread"></div>
+        
+      </main>
+      <footer><p>
+  &copy; Joseph Mansfield. Content licensed under a
+  <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external">
+    <abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr>
+  </a>
+  license.
+</p>
+</footer>
+    </div>
+    
+<script async>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -231,26 +156,6 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', 'UA-17335804-2', 'auto');
 ga('send', 'pageview');
 
-
-adsbygoogle = window.adsbygoogle || [];
-adsbygoogle.push({});
-adsbygoogle.push({});
-
-(function() {
-  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-  po.src = 'https://apis.google.com/js/plusone.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-
-(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&appId=526696677453668&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
 
 var disqus_shortname = 'josephmansfield';
 var disqus_identifier = '/articles/c++-sequenced-before-graphs';
@@ -262,8 +167,7 @@ var disqus_title = "C++ sequenced-before graphs";
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 })();
 
+</script>
 
-		</script>
-
-	</body>
+  </body>
 </html>

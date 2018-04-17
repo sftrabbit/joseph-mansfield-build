@@ -6,95 +6,841 @@
   xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
   <channel>
     <title>Joseph Mansfield</title>
-    <link>http://josephmansfield.uk</link>
+    <link>https://josephmansfield.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
     <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
     <item>
       <title>The lvalue/rvalue metaphor</title>
-      <link>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</link>
-      <description>A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.</description>
+      <link>https://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
-      <guid>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</guid>
+      <guid>https://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</guid>
+      <content:encoded><![CDATA[<p>Every expression in C++ is either an lvalue or an rvalue. This distinction is what makes something like <code>5 = x;</code> invalid, as the expression <code>5</code> is an rvalue expression and so cannot appear on the left of an assignment. This is in fact where the terms originate: only lvalues can appear on the left of an assignment, while rvalues must appear on the right <a href="#c++14" class="reference">[1] §3.10</a>. However, this only really describes one particular case, so isn't useful for a general understanding of lvalues and rvalues.</p>
+<p>For beginners, these <a href="http://en.cppreference.com/w/cpp/language/value_category">value categories</a> are a mild curiosity that appear only in error messages (for the above expression, GCC tells us "lvalue required as left operand of assignment"). However, since the introduction of move semantics and rvalue references in <a href="http://en.wikipedia.org/wiki/C%2B%2B11">C++11</a>, it has become more important than ever to understand them. One could try to learn every lvalue/rvalue rule in the standard, but there is a simple interpretation that can help you understand their purpose and reason about them. Lvalues and rvalues are just metaphors:</p>
+<ul>
+	<li>Lvalues represent objects and rvalues represent values.</li>
+	<li>Lvalue-to-rvalue conversion represents reading the value of an object.</li>
+	<li><a href="http://en.cppreference.com/w/cpp/utility/move"><code>std::move</code></a> allows you to treat any expression as though it represents a value.</li>
+	<li><a href="http://en.cppreference.com/w/cpp/utility/forward"><code>std::forward</code></a> allows you to preserve whether an expression represented an object or a value.</li>
+</ul>
+
+<section>
+	<h1>Lvalues and rvalues</h1>
+
+	<p>Every useful C++ program revolves around the manipulation of objects, which are regions of memory created at runtime in which we store values. A simple <code>int x;</code>, for example, creates an object for storing integer values.</p>
+	<p>We also come across values that do not belong to any particular object. For example, the literal <code>5</code> represents the abstract value of 5, but is not stored in any object. Similarly, if we have two <code>int</code> objects, <code>x</code> and <code>y</code>, the expression <code>x + y</code> gives us a value representing the result of the addition &mdash; this value is also not stored in an object.</p>
+	<p>A simple interpretation of lvalues and rvalues is that <b>lvalues represent objects and rvalues represent values</b>. In the following code, <code>x</code> denotes an object, so it's an lvalue. <code>x + 5</code> denotes a value, so it's an rvalue. The subexpression <code>5</code> is also an rvalue.</p>
+
+{% highlight cpp %}
+void foo(int x)
+{
+	bar(x); // the argument is an lvalue expression
+	bar(x + 5); // the argument is an rvalue expression
+}
+{% endhighlight %}
+
+	<p>I'm being careful here by using the word "represent". The truth is that rvalue expressions can denote objects too, but they still <em>represent</em> values. For example, some rvalue expressions result in the creation of a temporary object &mdash; such as a function call that returns by value <a href="#c++14" class="reference">[1] §5.2.2</a>. Although an object does really exist here, the expression can still be thought of as just representing a value of that type. Consider this function:</p>
+
+{% highlight cpp %}
+std::string get_message() {
+	return "Hello, World!";
+}
+{% endhighlight %}
+
+	<p>Elsewhere in your code, the function call <code>get_message()</code> denotes the value of an <code>std::string</code> containing "Hello, World!", rather than a persistent object that you are going to manipulate.</p>
+	<aside>
+		<p>Technically these are two kinds of rvalue: expressions denoting truly abstract values are prvalues (pure), while expressions denoting short-lived objects are called xvalues (expiring) <a href="#c++14" class="reference">[1] §3.10</a>.</p>
+		<img src="{{ site.media_url }}/images/lvalues-rvalues.png" alt="Rvalues are split into xvalues and prvalues. Lvalues and xvalues together are known as glvalues.">
+	</aside>
+</section>
+
+<section>
+	<h1>Lvalue-to-rvalue conversion</h1>
+
+	<p>Most operators in C++ expect rvalues (values) as their operands <a href="#c++14" class="reference">[1] §5</a>. If we want to perform addition, for example, we just need two values to add together &mdash; we don't care if they belong to objects. A notable exception is the assignment operator, which requires an lvalue (object) for its left operand <a href="#c++14" class="reference">[1] §5.17</a>. This is also logical &mdash; assignment needs an object in which to store something.</p>
+	<p>We can, however, also use lvalues where rvalues are expected &mdash; this is permitted by the implicit <dfn>lvalue-to-rvalue conversion</dfn> <a href="#c++14" class="reference">[1] §4.1</a>. Once again, this makes sense &mdash; if we provide an object where a value is expected, we can just read the value of the object. That is, <b>lvalue-to-rvalue conversion represents reading the value of an object</b>..</p>
+	<aside><p>Lvalue-to-rvalue conversion actually converts both lvalues and xvalues to prvalues. As we saw, an xvalue also denotes an object behind the scenes so we have to read its value too. Lvalues and xvalues are collectively known as glvalues (general).</p></aside>
+</section>
+
+<section>
+	<h1>Moving and forwarding</h1>
+
+	<p>Both <a href="http://en.cppreference.com/w/cpp/utility/move"><code>std::move</code></a> and <a href="http://en.cppreference.com/w/cpp/utility/forward"><code>std::forward</code></a> give you super powers: the ability to manipulate the value category of an expression.</p>
+	<p>A call to <code>std::move</code> is always an rvalue (value) expression. Because of this, <b><code>std::move</code> allows you to treat any expression as though it represents a value</b>. What's the purpose of this? Well, objects are persistent regions of storage that we don't expect to change when doing non-destructive operations on them. However, if we know that we don't need the object any longer, we can often use destructive yet more efficient implementations. Values are inherently transient, so treating an object like a value allows us to perform these more efficient operations. For example, by treating objects as values, we can efficiently steal their resources when copying them (which we call <dfn>moving</dfn>, rather than copying). Look up <a href="http://stackoverflow.com/q/3106110/150634">move semantics</a> to find out how to implement this for your classes.</p>
+	<p>In some cases, C++ will silently do this, treating your lvalues as rvalues <a href="#c++14" class="reference">[1] §12.8</a> (as though you had <code>std::move</code>d them). For example, when returning a local object from a function, the compiler knows that the object is no longer required and so can treat the returned expression as though it just represents a transient value:</p>
+
+{% highlight cpp %}
+widget foo()
+{
+	widget w;
+	// ...
+	return w; // the expression w is an lvalue, but is treated as an rvalue
+}
+{% endhighlight %}
+
+	<p><code>std::forward</code> relies on a neat little trick involving type deduction and reference collapsing. Consider the following example:</p>
+
+{% highlight cpp %}
+template<class T>
+void wrapper(T&& x)
+{
+	foo(std::forward<T>(x));
+}
+{% endhighlight %}
+
+	<p>When the argument passed to <code>wrapper</code> is an lvalue expression of type <code>widget</code>, <code>x</code> is deduced to be of type <code>widget&</code>. When it is an rvalue expression, <code>x</code> is of type <code>widget&&</code>. In both cases, the expression <code>x</code> will just be an lvalue. However, the <code>std::forward</code> function is cleverly designed so that <code>std::forward<T>(x)</code> is an lvalue in the first case and an rvalue in the second case. Therefore, <b><code>std::forward</code> allows you to preserve whether an expression represented an object or a value</b>.</p>
+</section>
+
+<section>
+	<h1>Conclusion</h1>
+
+	<p>This concludes a simple, intuitive intepretation for understanding lvalues and rvalues in which they are a metaphor for objects and values respectively. By thinking of lvalues and rvalues in this way, it becomes easier to reason about the behavior of your code and to make the most of modern C++.</p>
+</section>
+
+<p><a id="c++14">[1] International Standard ISO/IEC 14882:2014(E) Programming Language C++</a></p>
+]]></content:encoded>
       <dc:date>2015-01-26T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>Need a value? Pass by value</title>
-      <link>http://josephmansfield.uk/articles/need-value-pass-by-value.html</link>
-      <description>Passing by value and by const reference typically mean the same thing to the caller yet may be chosen in different circumstances, depending on who you ask. Why is writing function parameters harder than it should be in C++? Instead, let's keep it simple.</description>
+      <link>https://josephmansfield.uk/articles/need-value-pass-by-value.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
-      <guid>http://josephmansfield.uk/articles/need-value-pass-by-value.html</guid>
+      <guid>https://josephmansfield.uk/articles/need-value-pass-by-value.html</guid>
+      <content:encoded><![CDATA[<p>C++ experts have a tendency to over-complicate the language's best practices through rigorous academic discussions about the optimality of every possible line of code. This makes it difficult to learn C++ because the rules are complicated and a consensus is difficult to find.</p>
+<p>One particular case that I have come across a lot recently is the choice of whether to take a parameter by value or by <code>const</code> reference. These can both used for the same purpose &mdash; to get the value of the passed argument. After all, either will except any object of the correct type (whether temporary or not). For a long time, passing by <code>const</code> reference was popular for anything that wasn't a primitive type, to save from expensive copies. Since C++11 and the introduction of move semantics, the commonly accepted practice is to pass by value only when your function is going to need a copy anyway &mdash; allowing the move constructor to be used when the caller passes a temporary object and allowing the function to use <code>std::move</code> internally where appropriate &mdash; and pass by <code>const</code> reference otherwise. More recently, <a href="https://www.youtube.com/watch?v=xnqTKD8uD64">Herb Sutter gave evidence</a> that using a <code>const</code> reference might actually be more optimal in certain situations. I couldn't blame a person for being confused by all these different ideas about how to achieve optimal code.</p>
+<p>However, there are a few problems with these approaches:</p>
+<ul>
+	<li>We now have two things, value types and <code>const</code> references, that say the same thing to the caller: I need the value of your object. The choice of which is used often depends on what the function does to that value internally, thereby leaking internal details that the caller shouldn't need to care about. A new C++ programmer has to know this to avoid confusion and when to use each approach. A beginner shouldn't have to know the details of move semantics and copy optimizations just to write some function parameters.</li>
+	<li>A <code>const</code> reference doesn't succintly express its intention. It gets access to the caller's object and only transitively access to that object's value &mdash; it gets more information than is required. A <code>const</code> reference <em>could</em> mean something else. Is it going to keep this reference? Do you need to ensure an extended lifetime of your object? This isn't clear from the parameter types alone. Passing by value, on the other hand, is very expressive &mdash; it cares only about the value provided.</li>
+	<li>These approaches attempt to optimize before we even know that we need to &mdash; this is the very definition of premature optimization, which we all know is the <a href="http://c2.com/cgi/wiki?PrematureOptimization">"root of all evil"</a>. Most copies have minimal costs which are often mitigated by copy elision and move semantics anyway. Unless you're copying very frequently in a time or space critical part of your program, do you really need to complicate your interfaces for the sake of unnecessary optimizations? For the most part, optimization should be the compilers job &mdash; the programmer should only step in when necessary.</li>
+</ul>
+<p>For these reasons, I consider a <code>const</code> reference argument being used for the sake of optimization a <i>messy optimization</i>. It's an optimization that trades away the simplicity and readability of your interfaces, so it had better be worth it. Simplicity and readability come first &mdash; optimize later when you measure that there's a performance problem.</p>
+<p>So what if you do measure that there's a problem? Are you copying objects around that don't really need to be copied? Are those copies expensive? If so, I don't think that <code>const</code> references should be your first port of call. First try something like the <a href="http://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a> mechanism, in which the internals of an object are only copied when written to. This way, an expensive copy is only performed when necessary and your function interfaces remain exactly the same (the copy-on-write is hidden from the user). If copy-on-write doesn't help &mdash; and <a href="http://www.gotw.ca/publications/optimizations.htm">there is evidence</a> that it might lead to bad performance when implemented for multi-threaded environments &mdash; then try something else. Sure, <code>const</code> references might be appropriate at this point. However, you should only use them when necessary, isolate them to a specific region of your code, and document their use. A reference parameter intrudes on the caller's space. I don't want to have to wonder why your function wants a reference to my object &mdash; just tell me.</p>
+<p>This effectively makes the only use of <code>const</code> references when we actually require immutable access to the caller's object. That is, when the the caller's object itself, not only its value, is important to us. In these cases, we typically want to track changes to the value of that particular object. Alternatively, we might want access to an object that we really can't copy, perhaps because copying doesn't make sense for that type or you're working in a very low memory environment. These situations occur significantly less often than we use <code>const</code> references today.</p>
+<p>So let's keep it simple: <b>Need a value? Pass by value.</b> It's a rule that is easy to understand, simple to teach, and gives us safe interfaces and readable code. Messy optimizations should only be used when necessary.</p>
+]]></content:encoded>
       <dc:date>2014-12-23T00:00:00+00:00</dc:date>
     </item>
     <item>
-      <title>Don't condition input on eof()</title>
-      <link>http://josephmansfield.uk/articles/dont-condition-input-on-eof.html</link>
-      <description>File input is often mishandled in C++. Find out why conditioning on eof() might not do what you expect, and learn the correct, idiomatic approach to validating input.</description>
+      <title>Don't condition input on <code>eof()</code></title>
+      <link>https://josephmansfield.uk/articles/dont-condition-input-on-eof.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Sat, 29 Nov 2014 00:00:00 +0000</pubDate>
-      <guid>http://josephmansfield.uk/articles/dont-condition-input-on-eof.html</guid>
+      <guid>https://josephmansfield.uk/articles/dont-condition-input-on-eof.html</guid>
+      <content:encoded><![CDATA[<p>New C++ developers often learn the following incorrect pattern for reading from a file:</p>
+
+{% highlight cpp %}
+while (!file.eof()) {
+  // Read data from file
+  // Process data
+}
+{% endhighlight %}
+
+<p>At first glance, it seems to make sense &mdash; if I haven't reached the end of the file, I can keep reading from it &mdash; but this logic is wrong. The fundamental issue is simple: the <abbr title="End of File">EOF</abbr> bit not being set does not necessarily imply that reading from the file will succeed. This often occurs when looping over lines (or other delimited elements) in a file, in which case an extra iteration occurs and one of two common symptoms is observed:</p>
+<ul>
+	<li>There appears to be an extra blank line in the file.</li>
+	<li>The last line of the file appears to be processed twice.</li>
+</ul>
+<p>This problem raises an interesting question. If we know that we've read the last line of a file with <a href="http://en.cppreference.com/w/cpp/string/basic_string/getline"><code>std::getline</code></a>, why does the EOF bit not get set and prevent us from iterating again? Surely we have reached the end of the file. Why would it continue only to fail at the next attempt to read?</p>
+<p>The EOF bit is only set if you actually attempt to read anything beyond the end of the file. That is, if you were to call <a href="http://en.cppreference.com/w/cpp/io/basic_istream/get"><code>file.get()</code></a>, which extracts only a single character, reading the last character would not set the EOF bit, but the next call would. This doesn't fully answer the question, however, because some functions actually read one character beyond the data they extract. For example, <code>std::cin >> x</code>, where <code>x</code> is an <code>int</code>, discards any initial whitespace, and then will read up to and including a non-digit. The non-digit is not extracted, but it is read in order to determine that it should stop. Similarly, <code>std::getline</code> will read up to and including a newline character. These functions will also stop if they attempt to read beyond the end of the file. So the question remains &mdash; if we're reading the last line of a file with <code>std::getline</code>, why does it not attempt to read past the end of the file and therefore set the EOF bit?</p>
+<p>The answer is simple, but not immediately apparent: in general, all lines in a text file should end with a newline character &mdash; even the last line (in fact, the POSIX standards require it). In most text editors, this is not obvious because the final newline isn't visible in any way, but it's there (Sublime Text is one exception). There are <a href="http://stackoverflow.com/q/729692/150634">many reasons to have this newline character</a>, but it has unfortunate consequences for our <code>!file.eof()</code> loop. Consider the following file:</p>
+
+{% highlight text %}
+Today I pass the time reading
+a favorite haiku,
+saying the few words over and over.
+{% endhighlight %}
+
+<p>If we render the newline characters, it looks something like this:</p>
+
+{% highlight text %}
+Today I pass the time reading\n
+a favorite haiku,\n
+saying the few words over and over.\n
+{% endhighlight %}
+
+<p>Now, if we're iterating through this file, reading each line with <code>std::getline</code>, what happens when we read the last line? <code>std::getline</code> will read up to and including the final newline character and then return. It won't attempt to read beyond the end of the file. The EOF bit won't be set. If we are conditioned on <code>eof()</code>, we will start another iteration with nothing left to read.</p>
+<p>The same is true if we're extracting formatted data with <code>&gt;&gt;</code>. The last extraction will stop at the newline character and the EOF bit will not be set. There is no more data left to extract. In this case, it often appears that the last set of data is duplicated because the objects we are extracting into retain their values from the previous iteration.</p>
+<p>Of course, these operations are not specific to files. Any kind of input stream will exhibit the same behavior. The newline character at the end of files is frequently the cause of this problem, but conditioning on <code>eof()</code> is flawed regardless. It simply cannot tell if the following input will succeed or not. Any other I/O problems will also be ignored, since <code>eof()</code> only tells you if the EOF bit is set and not any of the other failure bits. This can lead to infinite loops.</p>
+<p>The correct and idiomatic approach to read from a stream is to condition on the success of the read itself. In this way, we attempt to extract the input and handle it appropriately if it fails. This means that you can stop at the right time and report problems to the user if necessary (if the stream data was incorrect). To loop over all lines in a file, for example, you should use the following:</p>
+
+{% highlight cpp %}
+while (std::getline(file, line)) {
+  // Process the line
+}
+{% endhighlight %}
+
+<p>Now we know for certain that the read succeeded before starting a new iteration of the loop. This also protects us against any other I/O problems that might cause it to fail. In fact, this pattern works everywhere, and should be used to validate any kind of input, even if you're not looping over it. For example, if you want to get some details about the user:</p>
+
+{% highlight cpp %}
+if (std::cin >> first_name &&
+    std::cin >> family_name &&
+    std::cin >> age) {
+  // Success
+} else {
+  // Failure
+}
+{% endhighlight %}
+
+<p>The <code>&&</code>s ensure that each input operation succeeds before attempting the next one and that all must succeed in order to enter the success branch.</p>
+<p>In practice, user input and data files tend to require a combination of these approaches. For example, they are often organised in structured lines. in which case I recommend looping conditioned on <code>std::getline</code> and then parsing each line individually. Inside the loop, you can put the line into a <a href="http://en.cppreference.com/w/cpp/io/basic_stringstream"><code>std::stringstream</code></a> and extract the individual items of data from that. You can validate those extractions with an <code>if</code> statement as in the previous example.</p>
+<p>The <code>!file.eof()</code> anti-pattern is still seen often, even in C++ tutorials and other teaching materials. As we have seen, <code>eof()</code> only tells if you've already attempted to read past the end of a file, which is rarely what you really want to check for. Instead, we can easily condition on the success of the extraction, which ensures that we only continue processing if it succeeds. This pattern helps us write robust input handling for all kinds of streams and should be used even when <code>!file.eof()</code> <em>appears</em> to work.</p>
+]]></content:encoded>
       <dc:date>2014-11-29T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>C++ sequenced-before graphs</title>
-      <link>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</link>
-      <description>A visual method for identifying and understanding undefined behavior in expressions.</description>
+      <link>https://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Wed, 17 Sep 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</guid>
+      <guid>https://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</guid>
+      <content:encoded><![CDATA[{% highlight cpp %}
+i = i++
+{% endhighlight %}
+
+<p>This expression, and many like it, demonstrate the sequencing rules of C++ and how they can cause your program to behave in ways you might not expect. What should the result of this expression be given some initial value for <code>i</code>? Questions like this are extremely frequent on <a href="http://stackoverflow.com/questions/tagged/c++">Stack Overflow</a>. In this case, the answer is that this code is completely undefined &mdash; it could do anything. Literally anything (at least formally speaking).</p>
+<p>The C++ standard defines an execution path according to your code. Given particular inputs, the program will always follow this execution path. Sometimes, the standard allows multiple possible execution paths for your program. This gives compilers extra freedom to optimize in various ways. When the standard allows a particular set of possible paths, this is known as <dfn>unspecified behavior</dfn>. In other cases, the standard gives absolutely no requirements about the behavior of your program, and this is known as <dfn>undefined behavior</dfn>. Undefined behavior is certainly not something you want in your code.</p>
+<aside><dfn>Implementation-defined behavior</dfn> is a subset of unspecified behavior, for which the implementation is required to document its choice of behavior.</aside>
+<p>The sequencing rules of C++, which describe how the evaluations of expressions and their subexpressions are ordered, may determine that an expression is undefined. C++11 introduced a smarter but slightly more complex approach to specifying these rules, which is still used in C++14. There’s a great <a href="http://en.cppreference.com/w/cpp/language/eval_order">overview of the rules on the cppreference.com wiki</a>.</p>
+<p>In simple terms, evaluations are ordered by a <dfn>sequenced-before</dfn> relationship. That is, evaluation of one part of an expression may be sequenced-before the evaluation of another part. Evaluations can be one of two things: <dfn>value computations</dfn>, which work out the result of an expression; and <dfn>side effects</dfn>, which are modifications of objects. When two evaluations are not sequenced-before each other, they are <dfn>unsequenced</dfn> (we cannot say which will occur first and they may even overlap).</p>
+<p>Informally, the basic sequencing rules are as follows:</p>
+<ul>
+	<li>The value computation of an operator’s operands are sequenced before the value computation of its result &mdash; else how would we compute the result? Note, however, that the side effects of the operands are not necessarily sequenced-before.</li>
+	<li>In general, the evaluation of an operator's operands are unsequenced with respect to each other. For example, in <code>x + y</code>, the evaluation of <code>x</code> and <code>y</code> are unsequenced.</li>
+	<li>For <code>&&</code>, <code>||</code>, and <code>,</code>, however, evaluation of the left operand is sequenced before the right operand.</li>
+	<li>The value computation of postfix <code>++</code> and <code>--</code> is sequenced before their side effects.</li>
+	<li>The side effects of prefix <code>++</code> and <code>--</code> are sequenced before their value computation.</li>
+	<li>The value computations of the operands of any assignment operator (<code>=</code>, <code>+=</code>, <code>-=</code>, etc.) are sequenced before the side effect of the assignment, which is itself sequenced before value computation of the assignment expression.</li>
+</ul>
+<p>The rules that define when the sequenced-before relationship exists between two evaluations inherently form an acyclic directed graph structure. As an example, let’s consider the earlier line of code once again:</p>
+
+{% highlight cpp %}
+i = i++
+{% endhighlight %}
+
+<p>Let's first split it up into its subexpressions. The full expression is the assignment, which has two operands. The left operand is just <code>i</code>, while the right operand is <code>i++</code> which itself has <code>i</code> as an operand. The following tree represents this structure, where the arrows represent the sequenced-before relationship of the value computations of those subexpressions:</p>
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/subexpressions.png" alt="The subexpression tree of i = i++."></figure>
+<p>Both the assignment and the increment have side effects (i.e. they modify the value of an object). We know how they are sequenced with respect to the value computations by looking at the above sequencing rules. The assignment comes after the value computation of its operands and before its own value computation. The increment comes after its value computation, but is not sequenced-before the assignment. If we add them as red nodes, we have:</p>
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/side-effects.png" alt="The almost-complete sequenced-before graph for i = i++."></figure>
+<p>We can read this graph as flowing chronologically upwards. For the purposes of determining undefined behavior, we also need to identify any value computations that <em>use the value of an object</em>. This is quite a subtle point, but only value computations of expressions denoting objects (like <code>i</code>) that are being used where an rvalue is expected are value computations that use the value of an object. When such an expression is used where an lvalue is expected instead, its value is not important, as in the left operand of <code>=</code>.</p>
+<aside>For those who want to read more, look up <a href="http://en.cppreference.com/w/cpp/language/value_category">value categories</a>. The left operand of <code>=</code> is an lvalue, which means that we don't care about its value. Lvalue-to-rvalue conversion can be thought of as reading the value from an object.</aside>
+<p>If we highlight value computations that use the value of objects in blue, we get:</p>
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/postincrement.png" alt="An annotated sequenced-before graph for i = i++."></figure>
+<p>Notice the interesting placement of the <code>i</code> increment &mdash; nothing else is sequenced after it, so it could even occur after the assignment. Herein lies the undefined behaviour. Depending on whether the increment occurs before or after the assignment, we could get different results.</p>
+<p>To determine whether an expression might be undefined, we can simply look at its graph. Two evaluations in different branches are completely unsequenced (that is, if there is no directed path between them). The standard states that we have undefined behaviour if: we have <b>two side effects on the same scalar object that are unsequenced</b>; or we have <b>a side effect on a scalar object and a value computation using the value of the same object that are unsequenced</b>. In the above graph, I have connected the problematic pair of evaluations with a dotted line &mdash; two unsequenced side effects.</p>
+<p>As you can see, this gives a great way to visualize the sequencing rules as applied to a particular expression and makes it much easier to see why certain expressions might result in undefined behaviour.</p>
+<p>Let’s take a look at some more examples of both undefined and well-defined expressions:</p>
+
+<hr>
+
+{% highlight cpp %}
+i = ++i
+{% endhighlight %}
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/preincrement.png" alt="An sequenced-before graph for i = ++i."></figure>
+<p>It is interesting to see that by merely switching the postfix increment to a prefix increment, this expression has become well-defined. That’s because the increment of <code>i</code> has to occur before the value computation of the increment expression and, therefore, before the assignment to <code>i</code>.</p>
+<aside>Before C++11, this was actually considered undefined, despite having only one possible result.</aside>
+
+<hr>
+
+{% highlight cpp %}
+i = i++ + i++
+{% endhighlight %}
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/complex.png" alt="An sequenced-before graph for i = i++ + i++."></figure>
+<p>This is a slightly more complex adaptation of the expression we first looked at. It seems to be quite a popular example. It has undefined behaviour for the same reasons, but also exhibits unsequenced side effects and value computations between the two increments. In the same way, <code>i++ + i++</code> alone is undefined.</p>
+
+<hr>
+
+{% highlight cpp %}
+i = v[i++]
+{% endhighlight %}
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/subscript.png" alt="An sequenced-before graph for i = v[i++]."></figure>
+<p>This one tends to be hard for many to grasp, although its problem is exactly the same as the previous examples. I suspect that most people think of <code>i++</code> as an operation that “returns the value of <code>i</code>, then increments <code>i</code>.” The problem is that the increment can happen at any point, and might happen after the assignment to <code>i</code>. The fact that we're using it as a subscript doesn't change anything.</p>
+
+<hr>
+
+{% highlight cpp %}
+i++ || i++
+{% endhighlight %}
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/logical-or.png" alt="An sequenced-before graph for i++ || i++."></figure>
+<p>This demonstrates the ability of some operators (namely <code>||</code>, <code>&&</code>, and <code>,</code>) to enforce sequencing between their operands. The standard states that every value computation and side effect associated with the left operand is sequenced before those of the right operand.</p>
+
+<hr>
+
+{% highlight cpp %}
+f(i = 1, i = 2)
+{% endhighlight %}
+<figure><img src="{{ site.media_url }}/images/sequencing-graphs/function.png" alt="An sequenced-before graph for f(i = 1, i = 2)."></figure>
+<p>Here we’re calling a function and in each argument we’re assigning a different value to <code>i</code>. The evaluations of function arguments are also unsequenced, so we cannot say what the value of <code>i</code> will be after this expression has been evaluated.</p>
+
+<hr>
+
+<p>It’s worth noting that function calls are always <dfn>indeterminately sequenced</dfn>. This means that one always occurs before the other, but we cannot say which way around. This is to prevent function calls from interleaving. However, the undefined behaviour rule only applies with unsequenced evaluations. Therefore, if you have two function calls in different branches that modify the same scalar object, you don’t have undefined behaviour &mdash; instead you have unspecified behaviour.</p>
+<p>Also remember that overloaded operators are actually treated as function calls. That is, if you want to know how <code>x + y</code> is sequenced, and <code>operator+</code> is overloaded for <code>x</code>, you need to treat the expression as <code>x.operator+(y)</code> or <code>operator+(x, y)</code> &mdash; whichever is defined.</p>
+<p>Finally, it is not always enough to look at the identifiers in expressions. Previously, we noted that an object <code>i</code> was modified in two parts of an expression. However, it’s possible to have two different identifiers, say <code>i</code> and <code>j</code>, that either refer to the same scalar object or are more complex data types that have a shared scalar object that they modify. Keep this in mind.</p>
+<p>Next time you come across a complex expression (which is hopefully not very often), you now have a great way to analyse the sequencing of evaluations and determine the possible execution paths of that expression. Perhaps this might reduce the number of questions on Stack Overflow about this topic, but if not, at least it gives a nice visual way to answer them.</p>
+]]></content:encoded>
       <dc:date>2014-09-17T00:00:00+01:00</dc:date>
     </item>
     <item>
-      <title>My Ludum Dare Experience</title>
-      <link>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</link>
-      <description>A look back at my first experience with Ludum Dare, a 48-hour accelerated game development competition.</description>
-      <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</guid>
-      <dc:date>2014-08-28T00:00:00+01:00</dc:date>
-    </item>
-    <item>
       <title>Exceptions, error codes, and assertions in C++</title>
-      <link>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</link>
-      <description>An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.</description>
+      <link>https://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Tue, 15 Jul 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</guid>
+      <guid>https://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</guid>
+      <content:encoded><![CDATA[<p>It can often be difficult to decide between the various methods of error reporting in C++. For example, some common advice is that exceptions should only be thrown in exceptional circumstances. Needless to say, this isn't particularly helpful. What exactly is an exceptional circumstance? An exception to what? If we throw assertions into the mix, this can become even more complicated.</p>
+<p>In general, functions express a contract to the calling code. They promise to perform some operation and give a particular result according to the given inputs. A member function can be considered to take an additional parameter, <code>this</code>, which is the object it's acting on. When a member function is not <code>const</code>, its <code>this</code> parameter is also an output. Error reporting is how we handle when there is a problem with meeting this contract and ensure that the relevant parties have been informed.</p>
+<p>Error reporting can occur at compile-time, in which case the compiler emits the error, or at run-time. Detecting a problem at compile-time is usually much better, as the program simply will not build until it is fixed and there will be no run-time cost. However, run-time error reporting is necessary for problems that cannot be statically detected or for when the error can be considered part of the normal execution of the program as long as it is handled appropriately.</p>
+<section>
+	<h1>Function design</h1>
+	<p>The ultimate way to prevent misuse of a function is to design its interface so that it simply cannot be misused. This means choosing parameter and return types that accurately represent what the user should be able to pass to and receive from the function. For example, <a href="{% post_url articles/2014-06-19-avoiding-ambiguity-raw-pointers %}">raw pointers often do not sufficiently express the function's intent and there are almost always better alternatives</a>. It also means ensuring that your functions behave responsibly - no hidden side effects, no hidden dependencies, <a href="http://stackoverflow.com/a/1853769/150634">proper exception safety</a>, and so on. With later versions of C++, it will also mean using concepts (<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4040.pdf">draft N4040</a>) appropriately to constrain template arguments.</p>
+	<p>The more expressive your function interfaces are with built in language features, the more the user can trust your functions and be confident that they will not screw anything up.</p>
+</section>
+<section>
+	<h1>Static assertions</h1>
+	<p>The next best thing is to introduce your own static error checking with <a href="http://en.cppreference.com/w/cpp/language/static_assert"><code>static_assert</code></a>. Using <a href="http://en.cppreference.com/w/cpp/types">type traits</a> and constant expressions, we can form conditions that can be evaluated and checked at compile-time. For example, while we do not yet have concepts, it is easy to enforce that a template function should only be instantiated for an integral type:</p>
+
+{% highlight cpp %}
+template <typename T>
+void foo(T arg) {
+  static_assert(std::is_integral<T>::value, "T must be an integral type");
+  // ...
+}
+{% endhighlight %}
+
+	<p>Static assertions can only evaluate constant expressions, so you won't be able to check anything that isn't known until run-time. For example, if you receive input from the user, you cannot check the value of this input with a <code>static_assert</code>. For that you need run-time error reporting.</p>
+</section>
+<section>
+	<h1>Exceptions</h1>
+	<p>When a problem cannot be detected at compile-time or when an error should reported to the calling code, the above approaches are not appropriate. Instead, we look to exceptions, error codes, and run-time assertions.</p>
+	<p>Exceptions can sometimes be quite difficult to decide when to use. What exactly constitute an exceptional circumstance? I prefer to think of it this way: a function should throw an exception if it is unable to fulfil the promise that it made to the calling code. To figure out what that promise is, summarize your function in one simple sentence (with no conjunctions). What does the function do? Look at the name of the function, the parameters it takes, and the objects it returns and write down what it promises. If you can't do this, perhaps your function should be simplified or split up into multiple functions.</p>
+	<p>Once you have a simple description of the function's behavior, it's easy to determine when an exception should be thrown. If it can't fulfil its promise, it should throw. It might be because the user gave it some arguments that were unsuitable or because some internal problem occurs - either way, throw an exception. As an example, consider the following function declaration:</p>
+
+{% highlight cpp %}
+image load_image(boost::filesystem::path image_file_path);
+{% endhighlight %}
+
+	<p>It should be clear what this function promises to do. It says "I will load an image from the given file path." If it is unable to perform this job, perhaps because the file does not exist or there is some other I/O problem, it should throw an exception. In fact, what else would it do in these situations? If it returns, it has to return an <code>image</code> object after all. You could have a special value of <code>image</code> that represents that an error has occurred, but I strongly advise against that. Exceptions allow the function to break out early and not have to care about returning an object of the correct type.</p>
+	<p>The only issue with exceptions is that you have to be careful. With the lack of useful exception specifications in C++, it is important to check the documentation for a function to see if it throws. Always try to write <a href="http://stackoverflow.com/a/1853769/150634">exception safe code</a>.</p>
+	<p>A common fallacy is that exceptions are slow. In fact, modern exception implementations have <a href="http://stackoverflow.com/a/13836329/150634">no cost when the exception is not thrown</a> (unlike an explicit check with <code>if</code>). There is some cost when throwing an exception, but you should find that they are not thrown often, so this cost can largely be ignored. Regardless, favor code readability and safety over performance until you measure that exceptions are a bottleneck in your code.</p>
+</section>
+<section>
+	<h1>Error codes</h1>
+	<p>Error codes have much less reason to be used in modern C++. They come in two flavors: an output object dedicated to expressing error conditions, or a special value of an output object that represents the error condition. Output parameters (that is, non-<code>const</code> reference or pointer parameters) are not typically a good idea and return objects should be preferred. This means that with the first flavor, the error codes must either be the sole output of a function or returned as part of a <a href="http://en.cppreference.com/w/cpp/utility/tuple"><code>std::tuple</code></a> or <a href="http://en.cppreference.com/w/cpp/utility/pair"><code>std::pair</code></a>. This may be an acceptable use of error codes. However, using a special value is not likely to be acceptable. In the above example, an image that failed to load should not be a valid <code>image</code> object. Doing so introduces special cases to your code and ruins any uniformity.</p>
+	<p>The important thing about error codes is that, unlike exceptions, they are part of the promise that a function makes. If the simple description of your function states that it provides error codes as part of its normal functionality, then an error code is okay. An obvious example for this is a function that is used specifically to report errors from some state (such as <a href="https://www.opengl.org/sdk/docs/man/docbook4/xhtml/glGetError.xml"><code>glGetError</code></a>). In this way, an error code shouldn't really represent a problem with the operation of the function, since returning an error code is actually successful operation.</p>
+	<p>Some gray areas arise when we look at functions that really do have a special case result. Consider a function like <a href="http://en.cppreference.com/w/cpp/algorithm/find"><code>std::find</code></a> that tries to find an element in a container. If it doesn't find the element, is that an exception? I would suggest it is not because the item not existing is a perfectly reasonable response to being asked to find it. Isn't the past-the-end iterator returned by <code>std::find</code> in this case an example of a special return value? Perhaps, but it provides a certain uniformity that allows it to be used in conjuction with other algorithms. An alternative interface might return a <a href="http://www.boost.org/doc/libs/1_55_0/libs/optional/doc/html/index.html"><code>boost::optional</code></a> with an optional iterator (in C++17, <code>std::optional</code>).</p>
+</section>
+<section>
+	<h1>Run-time assertions</h1>
+	<p>The <a href="http://en.cppreference.com/w/cpp/error/assert"><code>assert</code></a> macro from the <code>&lt;cassert&gt;</code> header, also known as a C assert, is able to check run-time conditions and abort execution if the condition is not met. It doesn't report the problem to the calling function. Since your program immediately ends when these assertions fail, they probably shouldn't make it into production builds. In fact, <code>assert</code> is defined such that you can turn it off by defining the macro name <code>NDEBUG</code>, so that it will only be triggered in debug builds.</p>
+	<p>Due to these properties, <code>assert</code> is most useful for sanity checks. That is, use <code>assert</code> internally to ensure that your code is doing what you expect it to do. It means "I know that this should be true in all cases, so if it's not, something is terribly wrong." For example, if you write a function that performs some complex calculation and you know that the result should always be greater than a certain value, otherwise the calculation has been implemented incorrectly, use <code>assert</code> to check this. Then when you run your debug build and a call to this function occurs that causes the assertion to fail, you'll know immediately that there's a problem and can start debugging the issue.</p>
+</section>
+<section>
+	<h1>Summary</h1>
+	<p>In summary, the different forms of error reporting should be used as follows:</p>
+	<dl>
+		<dt>Static assertions</dt><dd>To prevent invalid instantiations of templates and to check other compile-time conditions.</dd>
+		<dt>Exceptions</dt><dd>To let some calling code know that a function was unable to fulfil its contract due to some run-time problems.</dd>
+		<dt>Error codes</dt><dd>To report run-time conditions that are part of a function's contract and considered normal behavior.</dd>
+		<dt>Run-time assertions</dt><dd>To perform sanity checks on internal operations at run-time and ensure that major bugs do not enter production builds.</dd>
+	</dl>
+	<p>Remember that carefully designing your functions can avoid the need for many of these checks by preventing the user from misusing them in the first place.</p>
+</section>
+]]></content:encoded>
       <dc:date>2014-07-15T00:00:00+01:00</dc:date>
     </item>
     <item>
-      <title>Don't use auto unless you mean it</title>
-      <link>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</link>
-      <description>A unified, forward-thinking convention for using the auto keyword in C++: auto means anything. Learn when you should and should not use it.</description>
+      <title>Don't use <code>auto</code> unless you mean it</title>
+      <link>https://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Mon, 07 Jul 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</guid>
+      <guid>https://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</guid>
+      <content:encoded><![CDATA[<p>Since it's repurposing in C++11, <a href="http://en.cppreference.com/w/cpp/language/auto">the <code>auto</code> keyword</a> has largely been used as a convenience. It's one of the more well-known new features, perhaps because many programmers saw it as a way to simplify their code, but also has little consensus on when it should be used. It provides automatic type deduction in declarations based on their initializers. For example, <code>auto x = 5;</code> will deduce that <code>x</code> is an <code>int</code>.</p>
+<p>To beginner C++ programmers, <code>auto</code> may look like it provides dynamic typing as in JavaScript or Python. This is not the case. The type is still completely static because the type of the initializer is static too. Even if it were a declaration inside a function template, in which the initializer could have a different type depending on the particular template arguments, the type is static for each template instantiation and those template instantiations are themselves static. C++ is still a statically typed language.</p>
+<p>For many, <code>auto</code> is seen as a way to increase the brevity of code and hide away ugly C-style declarations, with the intention of making it easier to read and faster to write. After all, <code>auto</code> can save us from typing out the hideously long types we often find in C++. Some suggest to use <code>auto</code> as much as possible. I strongly feel that hiding away types is a stylistic choice and therefore the responsibility of the IDE and not of type deduction. Also, this is a difficult convention to stick to because it's hard to agree on whether a particular use is acceptable or not. Consider the following:</p>
+
+{% highlight cpp %}
+// Assuming range-based std::max_element
+auto best_candidate = std::max_element(employees, LessSuitableForTask{task});
+{% endhighlight %}
+
+<p>Is it clear what we can do with <code>best_candidate</code>? Is it the maximum value or an iterator pointing at the maximum value? If it's an iterator, what kind of iterator? For somebody who is fairly comfortable with C++, perhaps this might be obvious. For anybody else, we'd have to look up the definition of <code>std::max_element</code> just to find out what its return type is and then figure out what that type represents. This convention is therefore a matter of deciding how proficient a person needs to be to understand your code. If the initializer used functions and types from some other library, the reader has to be proficient with those also. When using <code>auto</code>, you are arbitrarily making the choice of whether it is acceptable or not. Additionally, if the initializer changes to give a type that is no longer suitable, you'll get errors from further down the code. This doesn't sound great to me.</p>
+<p>Instead of using <code>auto</code> so much, my proposed convention is as follows: <i>choose types that impose the minimum requirements on a declaration that are necessary for the code in which it is used to behave correctly</i>. Under this convention, <code>auto</code> imposes no requirements. It says “This variable can have any type and the code in which it is used will run just fine regardless.” This gives <code>auto</code> some meaningful semantics. You may correctly observe that this means we have only two choices: no requirements with <code>auto,</code> or no leniency with the actual type itself. That is, for now.</p>
+<p>A proposal to introduce concepts to C++ is in the works (<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4040.pdf">N4040</a> is the latest draft at the time of writing). Concepts would allow us to place requirements (called constraints) on template arguments. At the moment, a template argument (like <code>typename T</code>) will accept any type, which results in horrible errors being thrown from the internals of the template if that type is not appropriate. Go ahead; try doing something like <code>std::copy(5, 10, “foo”)</code> and enjoy the mess. Worse, it could compile fine and behave erratically. With concepts we'll be able to specify requirements on the arguments:</p>
+
+{% highlight cpp %}
+template <InputIterator InputIt, OutputIterator OutputIt>
+OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
+{% endhighlight %}
+
+<p>In fact, a terse syntax is also proposed which will allow us to use concept names in the argument declarations themselves:</p>
+
+{% highlight cpp %}
+auto copy(InputIterator first, InputIterator last, OutputIterator d_first)
+  -> OutputIterator;
+{% endhighlight %}
+
+<p>So with concepts, saying that a parameter is an <a href="http://en.cppreference.com/w/cpp/concept/InputIterator"><code>InputIterator</code></a> says that the arguments should meet the requirements imposed by the <code>InputIterator</code> concept. If you pass something that doesn't, you'll get a nice clean error message.</p>
+<p>We can also use <code>auto</code> in this terse syntax as the equivalent of <code>typename T</code> with no constraints:</p>
+
+{% highlight cpp %}
+void foo(auto something);
+{% endhighlight %}
+
+<p>Given the semantics of concepts for arguments, this means “I impose no requirements on the type of <code>something</code>.” Anything will do. This syntax is also being introduced for generic lambdas in C++14:</p>
+
+{% highlight cpp %}
+auto add = [](auto x, auto y) {return x + y;};
+{% endhighlight %}
+
+<p>It's intended that concepts will eventually be usable in normal variable declarations too, although a proposal has not yet been written. The previous <code>std::max_element</code> example could then be written:</p>
+
+{% highlight cpp %}
+InputIterator best_candidate = std::max_element(employees, LessSuitableForTask{task});
+{% endhighlight %}
+
+<p>This implies that any use of <code>best_candidate</code> only requires that it meets the requirements of an <code>InputIterator</code>. We are hiding away the actual type of the iterator, but not hiding the information that is actually important. On the other hand, <code>auto</code> hides everything. You can hopefully now see that the convention I have proposed unifies the declarations of both function arguments and variables:</p>
+
+{% highlight cpp %}
+some_type name = /* must be convertible to some_type */;
+SomeConcept name = /* must meet SomeConcept requirements */;
+MoreGeneralConcept name = /* must meet MoreGeneralConcept requirements */;
+auto name = /* can be anything */;
+
+void foo(some_type); // must take something convertible to some_type
+void foo(SomeConcept); // must take something that meets SomeConcept requirements
+void foo(MoreGeneralConcept); // must take something that meets MoreGeneralConcept requirements
+void foo(auto); // can take anything
+{% endhighlight %}
+
+<p>In both cases, you give the type or concept that has the least requirements required in order to use that object in the way you want to. Under this rule, <code>auto</code> means anything. Likewise, <code>auto&</code> means an lvalue reference to anything, <code>auto&&</code> is a <a href="http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers">universal reference</a>, and so on.</p>
+<p>This convention has multiple additional benefits. In the same way that template arguments allow the arguments to a function to change type, using concepts and <code>auto</code> allows the initializer of a declaration to change. As long as the initializer returns an object that meets the requirements, everything is fine. It also ensures that a nice clean error will be reported if a type is used that doesn't meet the requirements, unlike using <code>auto</code> which has the same problems as templates do today. It also makes the code easier to read than if <code>auto</code> were used for everything because you only need to understand what the type or concept represents. Also, concept names are brief and to the point.</p>
+<p>If you see <code>auto</code> under this convention, it means you really, really do not need to care about the variable's type. This means it should be used significantly less than it is being used now. For example, I would not use it in a range-based <code>for</code> loop unless I could really be iterating over anything. Instead, I'd use the type itself:</p>
+
+{% highlight cpp %}
+for (contact_details contact : contacts) {
+  send_email(contact.get_email_address(), "Hello, World!");
+}
+{% endhighlight %}
+
+<p>In this example, I'm calling <code>contact_details::get_email_address</code>, which means that <code>contact</code> has to be a <code>contact_details</code> object. This has a number of advantages over using <code>auto</code>:</p>
+<ol>
+	<li>Finding the type of <code>contact</code> only requires looking at its declaration and not at the type of <code>contacts</code>.</li>
+	<li>If the container type changes, you'll get an error directly from the <code>for</code> loop declaration, rather than deeper in your code.</li>
+	<li>It expresses your intent to use <code>contact</code> in ways only a <code>contact_details</code> object could be used.</li>
+	<li>It's consistent with all other declarations including parameters of templates.</li>
+</ol>
+<p>I'd say it's also better than writing <code>decltype(v)::value_type</code> because that ties the declaration to the initializer by assuming that it has a <code>value_type</code> typedef. Really, <code>contact</code> doesn't need to care.</p>
+<p>If I were writing a generic loop that could iterate over any kind of object and process it, <code>auto</code> would be fine:</p>
+
+{% highlight cpp %}
+for (auto element : range) {
+	  process(element);
+}
+{% endhighlight %}
+
+<p>Since concepts won't be around until C++17 and the ability to use concepts in normal variable declarations may not appear until later, this convention requires a lot of patience. Just don't get too excited about <code>auto</code> and use it everywhere. Instead, use it with some idea of how it will be used in the future. For now, use specific types in most cases. It's better to be overly specific than overly general, because using <code>auto</code> unnecessarily can lead to unclear code and confusing bugs. Using it too much now will make your code less idiomatic in the future. The only downside will be that if you change the type of the initializer, you'll have to change the type of the declaration, but that shouldn't happen too often. Obviously for now we need to be overly general with templates, otherwise they'd be useless, but for declarations we should prefer to be specific.</p>
+<p>Herb Sutter has previously proposed <a href="http://herbsutter.com/2013/08/12/gotw-94-solution-aaa-style-almost-always-auto/">AAA Style</a> (Almost Always Auto), which is pretty much the opposite of what I'm suggesting. However, we don't entirely disagree. Many of his arguments actually back up what I'm suggesting, particularly in terms of writing against interfaces instead of implementations. In his <code>append_unique</code> example, he remarks that <code>Container& c</code> makes it clear what the requirements of <code>c</code> are. This is simply mimicking what concepts will provide and is certainly a good practice for template arguments while we don't have them. However, <code>auto</code> doesn't have this benefit at all. Instead, <code>auto</code> is like writing <code>typename T</code> without any information about requirements. It certainly is less readable, perhaps not for the writer of the code, but for anybody else who wants to read and understand it.</p>
+<p>One problem that the AAA Style tries to solve, which I do not, is the horrible C declaration grammar. By using <code>auto</code> everywhere, we can easily see that a line is a variable declaration and we don't have to decode its type. Firstly, I don't think this should be the responsibility of <code>auto</code>, which is a much more powerful tool than a <code>var</code>-like keyword. Secondly, we can generally avoid the incredibly ugly type names and concepts will help us to do this.</p>
+<p>In summary, <code>auto</code> means anything. Only use it when you mean it, otherwise you make your code harder to read and introduce further problems. Just be patient for concepts, which will make this convention unified and logical. It'll pay off.</p>
+]]></content:encoded>
       <dc:date>2014-07-07T00:00:00+01:00</dc:date>
     </item>
     <item>
       <title>A tour of the C++ standard</title>
-      <link>http://josephmansfield.uk/articles/tour-cpp-standard.html</link>
-      <description>A structural overview of the ISO C++ standard, serving as an introduction to the document for new C++ programmers.</description>
+      <link>https://josephmansfield.uk/articles/tour-cpp-standard.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Thu, 03 Jul 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/tour-cpp-standard.html</guid>
+      <guid>https://josephmansfield.uk/articles/tour-cpp-standard.html</guid>
+      <content:encoded><![CDATA[<p>Perhaps more than any other language, C++ demands a certain level of intimacy from its programmers. Anybody who feels that they're getting serious with C++ should probably have a copy of the standard at hand. The are two reasons for this: the C++ language and library are fairly complex, so the standard serves as the ultimate reference (when <a href="http://cppreference.com">cppreference.com</a> doesn't suffice); and simply compiling a program and running it is often not enough to tell you whether the program is absolutely correct. Familiarizing yourself with the standard will help you know when to question the correctness of your code.</p>
+<section>
+	<h1>Getting the standard</h1>
+	<p>Published C++ standards can be purchased from the <a href="http://www.iso.org/iso/home/store.htm">ISO</a> and <a href="http://webstore.ansi.org/">ANSI</a> stores. The latest publication, colloquially known as C++11, is formally titled <cite>ISO/IEC 14882:2011</cite>.</p>
+	<p>For many, purchasing the standard is both inconvenient and unnecessary. Many papers that come out of the standard committee (known as N-documents), including drafts of the standard, are available for free. The drafts on either side of a publication are usually very similar to it, save for a few small changes. For example, draft <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3337.pdf">N3337</a> is the same as the C++11 standard but with a few typographical corrections. The <a href="http://isocpp.org/">official ISO C++ committee</a> website also maintains a link to the latest draft. The LaTeX source is also available on GitHub in the <a href="https://github.com/cplusplus/draft">cplusplus/draft</a> repository.</p>
+	<p>This tour will be based on the final draft of C++14, <a href="https://github.com/zygoloid/cplusplus/raw/master/papers/N3936.pdf">N3936</a>, which is the latest draft available at the time of writing. Much of this general overview will be the same as for earlier standards.</p>
+</section>
+<section>
+	<h1>References</h1>
+	<p>Sections in the C++ standard are both numbered and labelled. Either can be used for referencing, where §5.2.2 and [expr.call], for example, both refer to the “Function call” section. Labels tend to be easier to recognize and stay consistent as the content of the standard changes, but numbers are easier to locate. Sometimes it's useful to provide both. Paragraphs are also numbered, so §5.2.2/3 is typically used to refer to the 3rd paragraph of that section.</p>
+</section>
+<section>
+	<h1>Language and library</h1>
+	<p>The C++ standard has 30 chapters, which can seem a little daunting at first. It could, however, easily be split into two major parts. Chapters 2&ndash;16 constitute the language itself, defining how a compiled program should behave, while Chapters 17&ndash;30 define all the types and functions made available in the standard library.</p>
+	<p>Chapter 1 is an introduction to the standard, defining a few common terms and introducing some fundamental concepts, such as the C++ object and memory models. Section 1.4 [intro.compliance] describes what it means for an implementation to be compliant. In simple terms, an implementation needs to produce programs that meet all of the language rules defined in Chapters 2&ndash;16. The language rules are generally independent of the standard library, so a compliant implementation need only provide a minimal subset of the library (as described in §17.6.1.3 [compliance]). However, most implementations aim to provide C++ in its entirety.</p>
+<section>
+	<h1>Lexing and preprocessing</h1>
+	<p>Chapter 2 [lex] describes how we take a source file and split the content up into a series of tokens. For example, keywords and literals are all tokens. If you wanted to see a list of keywords or which characters are allowed in an identifier, this is where you'd look.</p>
+	<p>Sections 2.1 [lex.separate] and 2.2 [lex.phases] give an overview of the full process of compiling and linking a source file. Before compilation, the source file is broken down into preprocessing tokens, which include preprocessing directives (like <code>#include</code> and <code>#define</code>). The behavior of these preprocessing directives is described in Chapter 16 [cpp]. I always thought this chapter should go near the beginning but I suppose it's considered a kind of appendix to the language chapters.</p>
+</section>
+<section>
+	<h1>The basics</h1>
+	<p>Chapter 3 [basic] introduces some basic concepts, such as the definition of a name, an object, a variable, and so on. It describes the properties of an object, such as its type, linkage, and storage duration. It also describes how a name is looked up to find its declaration.</p>
+	<p>Chapter 4 [conv] defines the standard conversions between built-in types. For example, if you want to know about implicit conversions between integer types, this is where you want to look. A commonly cited section, due to the mass confusion about how arrays and pointers interact, is §4.2 [conv.array].</p>
+</section>
+<section>
+	<h1>Core language</h1>
+	<p>Chapters 5&ndash;8 are what I think of as the core of the language. Every bit of code you write is made up of these things. They describe expressions, statements, declarations, and declarators respectively.</p>
+	<p>After a source file has been preprocessed, at the very basic level it is simply a sequence of <em>declarations</em>, including variables, namespaces, and classes. Some of those declarations will be function definitions. Function definitions have a function body, which is a sequence of <em>statements</em> within curly braces. Statements are <code>{…}</code> blocks, <code>if</code>, <code>switch</code>, <code>while</code>, <code>for</code>, etc - all those things that you see in the procedural parts of your code. Some declarations are also valid statements, which is how we're able to declare variables and other things within functions.</p>
+	<p>An <em>expression</em> is what performs operations on objects. Expressions are made up of operators being applied to the results of subexpressions. For example <code>*p + 5</code> is an expression which applies the addition operator to the results of the subexpressions <code>*p</code> and <code>5</code>. Expressions are also valid statements, which is why we can write something like <code>x = 5 * y;</code> in a function body. Section 5 [expr] is where you'll find everything about expressions. If you want to know what an operator does, what it returns, whether an expression is an lvalue or rvalue, this is where you look.</p>
+{% highlight cpp %}
+int x; // declaration
+struct y; // declaration
+
+void foo() // declaration (a function definition)
+{
+	if (...) { ... } // statement
+	int z = 5; // a statement which is a declaration
+	x = z; // a statement which is an expression
+}
+{% endhighlight %}
+	<p>The difference between a declaration (§7) and a declarator (§8) may not be immediately clear - the terminology certainly doesn't help. Each declaration has at least one <em>declarator</em>. The declaration <code>int x;</code> has one declarator, while <code>int x, y;</code> has two. That is, each declarator introduces an entity to your program. You may have seen something like <code>int* p1, p2;</code> and found out that only <code>p1</code> is a pointer, while <code>p2</code> is a plain <code>int</code>. That's because the <code>*</code> character is part of the declarator of <code>p1</code>. If you wanted both to be pointers, you'd need <code>int *p1, *p2;</code>. In fact, in a more complex variable declaration like <code>const short& (*f)(int, char);</code>, only <code>const short</code> belongs to the entire declaration. The rest belongs to the declarator of <code>f</code>.</p>
+</section>
+<section>
+	<h1>Classes</h1>
+	<p>Chapters 9 through 12 cover everything to do with classes. Chapter 9 [class] describes how a class definition is formed. Chapter 10 [class.derived] gives the syntax and rules of inheritance, including how member names are looked up, as this process is complicated by inheritance. Chapter 11 [class.access] describes member access control using <code>private</code>, <code>protected</code>, and <code>public</code> and how to determine whether a particular member is accessible within a particular context. Finally, Chapter 12 [special] describes special member functions, such as constructors, destructors, conversion operators, and so on. The intriguing rules of copy/move elision are described here in §12.8 [class.copy].</p>
+</section>
+<section>
+	<h1>Overload resolution</h1>
+	<p>Chapter 13 [over] gives the rules of overloading. That is, it describes when multiple declarations with the same name are valid together, and how a particular declaration will be chosen when more than one is available.</p>
+</section>
+<section>
+	<h1>Templates</h1>
+	<p>Chapter 14 [temp] is the largest language chapter in the standard because templates are such a complex topic. This chapter defines the template syntax for functions and classes, describes how template arguments bind to template parameters, how name resolution is affected in the context of a template, template specialization, and more.</p>
+</section>
+<section>
+	<h1>Exceptions</h1>
+	<p>Chapter 15 [except] describes the exception handling mechanisms supported by C++. It defines the syntax for throwing and catching exceptions and how the propagation of exceptions is performed.</p>
+</section>
+<section>
+	<h1>The Standard Library</h1>
+	<p>As described earlier, the latter half of the standard (Chapters 17 through 30) are devoted to the standard library. That is, these chapters define every class, function, and template you find in the <code>std</code> namespace. Chapter 17 [library] serves as an introduction and introduces some important requirements that are enforced throughout the library. For example, §17.6.4.2.1 [namespace.std] tells that you cannot add additional declarations to <code>std</code>. The library also defines syntactic and semantic requirements on types, and §17.6.3 [utility.requirements] introduces some common ones, such as what it means to be <code>EqualityComparable</code> or to be an <code>Allocator</code>.</p>
+	<p>The rest of these chapters are all named “… library” and all have pretty much the same structure. They introduce a few related requirements, a synopsis of the contents of a particular header, and then define the operation of types and functions in that header in terms of effects, preconditions, and postconditions.</p>
+	<p>Let's look at §21 [strings], the “Strings library” chapter. It first describes character traits and the requirements for a traits type. It then gives an overview of the <a href="http://en.cppreference.com/w/cpp/header/string"><code>&lt;string&gt;</code></a> header in code form, so you can quickly take a look at all the declarations introduced by this header. The remaining sections in this chapter then define the behavior of these declarations. For example, §21.4 [basic.string] defines the <a href="http://en.cppreference.com/w/cpp/string/basic_string"><code>std::basic_string</code></a> template (of which <code>std::string</code> is a particular instantiation) and it says, for example, that <code>a_string.front()</code> is equivalent to <code>a_string[0]</code>. This is where you would look if you wanted to know how a particular function behaves, including whether or not it might throw.</p>
+	<p>The remaining chapters each cover the various other headers in the standard library:</p>
+	<dl>
+		<dt>Language support</dt><dd>Various headers containing functions and types that may be used implicitly by a program, such as <a href="http://en.cppreference.com/w/cpp/utility/initializer_list"><code>std::initializer_list</code></a> and the storage allocation functions that are used by <code>new</code> and <code>delete</code> expressions. The language depends on many of these entities, so they are required by all conforming implementations.</dd>
+		<dt>Diagnostics</dt><dd>Entities that provide error handling, exceptions, and assertion functionality.</dd>
+		<dt>General utilities</dt><dd>Entities that are likely to be useful in general, such as smart pointers, <a href="http://en.cppreference.com/w/cpp/utility/tuple"><code>std::tuple</code></a>, <a href="http://en.cppreference.com/w/cpp/utility/pair"><code>std::pair</code></a>, and the <a href="http://en.cppreference.com/w/cpp/header/chrono"><code>&lt;chrono&gt;</code></a> time utilities.</dd>
+		<dt>Strings</dt><dd>The <a href="http://en.cppreference.com/w/cpp/header/string"><code>&lt;string&gt;</code></a> header provides <a href="http://en.cppreference.com/w/cpp/string/basic_string"><code>std::basic_string</code></a>, string manipulation functions, and support for using <code>std::string</code> with the I/O streams.</dd>
+		<dt>Localization</dt><dd>The <a href="http://en.cppreference.com/w/cpp/header/locale"><code>&lt;locale&gt;</code></a> header with support for localizing numerical and time values.</dd>
+		<dt>Containers</dt><dd>Provides the many container headers, such as <a href="http://en.cppreference.com/w/cpp/header/vector"><code>&lt;vector&gt;</code></a>, <a href="http://en.cppreference.com/w/cpp/header/array"><code>&lt;array&gt;</code></a>, <a href="http://en.cppreference.com/w/cpp/header/list"><code>&lt;list&gt;</code></a>, and so on, for storing sequences of elements.</dd>
+		<dt>Iterators</dt><dd>Defines the requirements on different iterator categories and some useful iterator types in <a href="http://en.cppreference.com/w/cpp/header/iterator"><code>&lt;iterator&gt;</code></a>.</dd>
+		<dt>Algorithms</dt><dd>The <a href="http://en.cppreference.com/w/cpp/header/algorithm"><code>&lt;algorithm&gt;</code></a> header contains various generic algorithms that can be applied to sequences of elements, such as <a href="http://en.cppreference.com/w/cpp/algorithm/for_each"><code>std::for_each</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/find"><code>std::find</code></a>, and <a href="http://en.cppreference.com/w/cpp/algorithm/transform"><code>std::transform</code></a>.</dd>
+		<dt>Numerics</dt><dd>Defines the <a href="http://en.cppreference.com/w/cpp/header/complex"><code>&lt;complex&gt;</code></a> header for complex numbers, <a href="http://en.cppreference.com/w/cpp/header/random"><code>&lt;random&gt;</code></a> for high quality random number generation, and other useful numeric utilities. Also includes the <a href="http://en.cppreference.com/w/cpp/header/cmath"><code>&lt;cmath&gt;</code></a> C library header for common math functions.</dd>
+		<dt>Input/output</dt><dd>Provides various I/O stream headers, including the formatted streams (like <a href="http://en.cppreference.com/w/cpp/io/cin"><code>std::cin</code></a> and <a href="http://en.cppreference.com/w/cpp/io/cout"><code>std::cout</code></a>) and file streams.</dd>
+		<dt>Regular expressions</dt><dd>The <a href="http://en.cppreference.com/w/cpp/header/regex"><code>&lt;regex&gt;</code></a> header provides functionality for matching and searching for regular expressions within strings.</dd>
+		<dt>Atomic operations</dt><dd>Types and functions in <a href="http://en.cppreference.com/w/cpp/header/atomic"><code>&lt;atomic&gt;</code></a> are used to ensure atomic access, particularly useful with the threads library.</dd>
+		<dt>Thread support</dt><dd>Provides the <a href="http://en.cppreference.com/w/cpp/header/thread"><code>&lt;thread&gt;</code></a> header for platform-independent thread support for multitasking and concurrent execution.</dd>
+	</ul>
+</section>
+<section>
+	<h1>Finding your way around</h1>
+	<p>You hopefully have a reasonable idea of how the C++ standard is structured now, but it's still going to be quite hard to navigate your way around. It can sometimes to be pretty difficult to find what you're looking for.</p>
+	<p>For example, let's say you want to find out why you can't have a <a href="http://en.cppreference.com/w/cpp/container/vector"><code>std::vector</code></a> of reference type elements (<code>T&amp;</code>). You might be inclined to look at §23.3.6 [vector], which defines <code>std::vector</code>, but you won't find the answer there. Perhaps it's a requirement on a particular member function? Or maybe it's a requirement on containers in general? If you follow for long enough, what you'll find is that <code>std::vector</code> meets the requirements of an allocator-aware container, which means that it allocates its contents using an allocator. If you look at the requirements for an allocator (§17.6.3.5 [allocator.requirements]), you'll see that an allocator is only defined for non-const object types. If you then take a look at §3.9 [basic.types], you'll see that object types do not include references. There's your answer. Phew.</p>
+	<p>The standard can sometimes be a bit maze-like. The only advice I have is to get used to it by reading it often. You'll soon figure out the best way to find what you want. If you can't find something, you can always write some example code that exhibits whatever you don't understand and ask on <a href="http://stackoverflow.com/">Stack Overflow</a>.</p>
+</section>
+<section>
+	<h1>Keeping up to date</h1>
+	<p>Before and after each C++ committee meeting, papers that have been written recently are mailed out to everybody. These mailings are available on the <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/">committee website</a>. Every now and then, one of those papers is a working draft of the C++ standard. Subscribe to the <a href="https://isocpp.org/blog/rss">Standard C++ RSS feed</a> to find out when new papers are mailed out.</p>
+</section>
+]]></content:encoded>
       <dc:date>2014-07-03T00:00:00+01:00</dc:date>
     </item>
     <item>
       <title>Custom syntax highlighting with Jekyll and Pygments</title>
-      <link>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</link>
-      <description>Learn how to customize the behavior of the Jekyll's built-in syntax highlighting with Pygments, which doesn't always come out the way you want it.</description>
+      <link>https://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</guid>
+      <guid>https://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</guid>
+      <content:encoded><![CDATA[<p><a href="http://jekyllrb.com/">Jekyll</a> is a great tool for statically generating websites. Among its many neat features is a convenient template syntax for performing automatic syntax highlighting of code in your pages and posts:</p>
+
+{% highlight liquid %}
+{% raw %}
+<p>Check out this great code I wrote:</p>
+{% highlight cpp %}
+int void(int argc, const char* argv[]) {
+	return 0;
+}
+{% endhighlight %}
+{% endraw %}
+{% endhighlight %}
+
+<p>Jekyll makes use of <a href="http://pygments.org/">Pygments</a>, a Python library for performing syntax highlighting. Pygments takes some code and marks it up according to its syntax. It tends to give only a rough approximation of the true syntax, and it doesn't necessarily account for every feature of a language. This means that if you're as meticulous as I am, you may not be completely happy with the results.</p>
+
+<p>To customize Jekyll's syntax highlighting, you need to install a modified build of Pygments. You'll probably need to know a little Python to do this, but you may be able to get by with just copying existing code. The documentation for <a href="#">Python's regular expressions module</a> may come in useful.</p>
+
+<section>
+	<h1>pygments.rb</h1>
+	<p>Since Jekyll is a Ruby application, it actually uses <a href="https://rubygems.org/gems/pygments.rb">pygments.rb</a>, a Ruby wrapper for Pygments. In fact, pygments.rb contains a copy of the Pygments source within its own repository, so if you want to modify the syntax highlighting behavior, you need only modify pygments.rb.</p>
+	<p>Grab yourself a copy of the pygments.rb source. If you want to keep a copy of your changes on GitHub, I recommend forking <a href="https://github.com/tmm1/pygments.rb">tmm1/pygments.rb</a> on GitHub and then cloning your fork. If not, you can just clone the pygments.rb repository:</p>
+
+	{% highlight bash %}
+$ git clone pygments.rb
+$ cd pygments.rb
+	{% endhighlight %}
+
+	<p>The Pygments source is stored in this repository in <code>vendor/pygments-main/</code>. The lexers, which you'll want to modify to customize your syntax highlighting, are in <code>vendor/pygments-main/pygments/lexers/</code>. For example, if you want to modify the C++ lexer, you'll find it as the class <code>CppLexer</code> in <code>compiled.py</code> in that directory.</p>
+</section>
+<section>
+	<h1>How Pygments' lexers work</h1>
+	<p>The Pygments developers have <a href="#">a helpful tutorial on writing lexers</a>. In brief, most lexers inherit from <code>RegexLexer</code>, which allows you to specify the syntax highlighting rules with regular expressions. Each lexer has a few properties that give the lexer's name, aliases that can be used to identify the lexer (such as in the <code>{% raw %}{% highlight %}{% endraw %}</code> tag), and associated file extensions and mimetypes.</p>
+	<p>The most important property of a lexer is its <code>tokens</code>. These define the rules for syntax highlighting. The <code>tokens</code> property maps states to a list of rules that can be applied while in that state. When it begins parsing your code, it starts in the <code>'root'</code> state. Each rule is a triple including a regular expression to match, token names to apply to that match, and a new state to transition to. The new state can be omitted to stay in the same state, or <code>'#pop'</code> can be used to return to the previous state.</p>
+	<p>For example, take a look at the <code>'root'</code> state rules from the PHP lexer:</p>
+
+{% highlight python %}
+{% raw %}
+        'root': [
+            (r'<\?(php)?', Comment.Preproc, 'php'),
+            (r'[^<]+', Other),
+            (r'<', Other)
+        ],
+{% endraw %}
+{% endhighlight %}
+
+	<p>In the PHP lexer's root state, if it finds an opening PHP tag (<code>&lt;?php</code> or <code>&lt;?</code>), it marks this code as a <code>Comment.Preproc</code> token and moves into the <code>'php'</code> state. After this, only rules specified under the <code>'php'</code> state will be applied.</p>
+	<p>The tokens that you can use are listed in <code>vendor/pygments-main/pygments/token.py</code>. Each token has a corresponding short name, which is used as the CSS class name for that token. For example, the opening PHP tag will be given the <code>cp</code> class name corresponding to the <code>Comment.Preproc</code> token. If no existing token is suitable for a lexer you're writing, you can simply add one to this list.</p>
+	<p>Pygments will simply apply the appropriate rules, consuming the text that matches the regular expressions at each step, until the entire input has been processed. The result is some marked up code, with <code>&lt;span&gt;</code> elements wrapping each token with corresponding <code>class</code> values. Customizing the existing lexers is usually as simple as adding to or modifying the existing rules.</p>
+</section>
+<section>
+	<h1>Adding a lexer</h1>
+	<p>If you want to highlight a language that is not supported by Pygments, you can simply add your own lexer. It is easiest to use an existing lexer as a starting point. Just inherit from <code>RegexLexer</code>, add the <code>name</code>, <code>aliases</code>, <code>filenames</code>, and <code>mimetypes</code> properties as appropriate, and then write your own <code>tokens</code> rules.</p>
+	<p>You can add your lexer to one of the existing files in <code>vendor/pygments-main/pygments/lexers</code> or add your own file. Be sure to add the name of your lexer class to the file's <code>__all__</code> variable. Once you've done this, your lexer needs to be registered with the library. This registry is stored in <code>_mapping.py</code>, which can be generated by running <code>make mapfiles</code> from within <code>vendor/pygments-main/</code>:</p>
+
+{% highlight bash %}
+pygments.rb$ (cd vendor/pygments-main && make mapfiles)
+{% endhighlight %}
+</section>
+<section>
+	<h1>Installing your custom pygments.rb</h1>
+	<p>For Jekyll to use your customised pygments.rb, you need to build and install it. You can do that easily with the following commands:</p>
+
+{% highlight bash %}
+pygments.rb$ gem build pygments.rb.gemspec
+pygments.rb$ sudo gem install pygments.rb-VERSION.gem
+{% endhighlight %}
+
+	<p>Replace <code>VERSION</code> with the version of pygments.rb that you're building. Just look for the <code>.gem</code> file.</p>
+</section>
+]]></content:encoded>
       <dc:date>2014-06-19T00:00:00+01:00</dc:date>
     </item>
     <item>
       <title>Ambiguous raw pointers</title>
-      <link>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</link>
-      <description>A look at the properties of raw pointers, an abundant source of bugs and confusion for C++ programmers, that make them unsuitable for modern code.</description>
+      <link>https://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</guid>
+      <guid>https://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</guid>
+      <content:encoded><![CDATA[<p>I recently posted <a href="http://stackoverflow.com/a/22146244/150634">an answer on Stack Overflow</a> about the misuses of dynamic allocation and raw pointers (that is, types like <code>int*</code>). You'll probably see this kind of advice regularly in the context of modern C++. There's almost always safer alternatives that make your code much cleaner and are less likely to introduce bugs. While dynamic allocation and raw pointers are often found together, they are orthogonal concepts that each have their own problems. In this article, we'll look only at raw pointers.</p>
+<p>It's important to choose types that cannot be used in ways for which they weren't intended. This ensures that problems are detected earlier and that your interfaces are clean and expressive. I often think about what types <em>tell me</em>. Just by looking at the type of a variable (perhaps a function parameter), what can I determine about the values that it should take?</p>
+<p>Raw pointers are far too ambiguous. It is possible to use them in ways much broader than their intended use, often with terrible consequences. If you see a function with a pointer parameter, it is difficult to know what you should be passing to the function without reading its documentation. Even then, you'd better hope the documentation was correct and you are passing the correct things. The more specific we can be with our types the better, as it ensures that our code is safe, trustworthy, and easily understood. As with many things in C++, we can often achieve this with little to no run-time cost.</p>
+<p>Let's consider a pointer type, <code>T*</code>, and some questions it leaves unanswered:</p>
+<ul>
+	<li>Can it be a null pointer?</li>
+	<li>Can it point at an invalid object?</li>
+	<li>What is the storage duration of the object?</li>
+	<li>Who has mutable access to the object?</li>
+	<li>Who is responsible for <code>delete</code>ing the object, if necessary?</li>
+	<li>Is the object just one element in an array of <code>T</code>?</li>
+</ul>
+<p>In fact, all this pointer really says is “I store either a null pointer value or the address of what is <em>hopefully</em> a <code>T</code> object”. It's not nice to have all these mysteries whenever we see a raw pointer. Ideally, our types should be explicit about as many of these things as possible.</p>
+<section>
+	<h1>Arrays</h1>
+	<p>Pointers are commonly used to point at the first element in an array. This is necessary when an array type itself cannot be used, such as when the array has dynamic length or as the parameter of a function. The usual array indexing syntax can be applied to the pointer, so it can largely be treated as though it were an array. Using pointers in this way is ambiguous because nothing about the type actually says it's pointing at an element in an array.</p>
+{% highlight cpp %}
+struct Conversation {
+	// ...
+	std::string* messages;
+	// ...
+};
+{% endhighlight %}
+	<p>Here, only the plural name of the data member suggests that it might be pointing at the first element in array. How would we know without looking at how the pointer is being assigned?</p>
+	<p>In this case, we are much better off using a standard library container:</p>
+{% highlight cpp %}
+struct Conversation {
+	// ...
+	std::vector<std::string> messages;
+	// ...
+};
+{% endhighlight %}
+	<p>Now we know for certain that <code>messages</code> is some kind of container of strings. This also has the benefit of having a much nicer interface, rather than having to manually perform dynamic resizing of the array.</p>
+</section>
+<section>
+	<h1>C-style strings</h1>
+	<p>It is common to read the type <code>char const*</code> as “a C-style string”, but this is only because it is so often treated as a special case. We tend to assume that it points at the first character in a null-terminated array of characters. This is quite a strong assumption, given that there's no reason this pointer couldn't just be pointing at a single <code>char</code>, or even an array of <code>char</code> that is not null-terminated.</p>
+{% highlight cpp %}
+void print(char const*);
+{% endhighlight %}
+	<p>We would probably assume that we should pass a C-style string to this function. However, the type of the argument itself is not enough to know for certain. What would happen if we passed a pointer to a single <code>char</code>? What about a null pointer? Would it break? Why even allow this possibility?</p>
+{% highlight cpp %}
+void print(std::string const&);
+{% endhighlight %}
+	<p>This is much better because it explicitly asks for a <code>std::string</code> and we know what a <code>std::string</code> represents. It is impossible for us to pass something that is not a string.</p>
+</section>
+<section>
+	<h1>Optional arguments</h1>
+	<p>While default arguments are supported by the language, raw pointers are sometimes used to allow arguments from the middle of the argument list to be omitted. A null pointer is treated as an omitted argument.</p>
+{% highlight cpp %}
+double complexAlgorithm(int, Whatsamajig const*, std::string const*, double const*);
+{% endhighlight %}
+	<p>This function has three arguments that are optional. However, we cannot know for certain without reading the documentation. Are we sure it won't break if we pass a null pointer?</p>
+{% highlight cpp %}
+double complexAlgorithm(int, boost::optional<Whatsamajig>, boost::optional<std::string>, boost::optional<double>);
+{% endhighlight %}
+	<p>By using <a href="http://www.boost.org/doc/libs/1_55_0/libs/optional/doc/html/index.html"><code>boost::optional</code></a>, it is clear that these arguments are optional. To omit an argument, we pass <code>boost::none</code>.</p>
+	<aside><p>It is expected that <code>boost::optional</code> will make its way into the upcoming C++17 standard as <code>std::optional</code>.</p></aside>
+</section>
+<section>
+	<h1>Reference semantics</h1>
+	<p>In general, value semantics should be preferred, where the value of an object is all that is important, rather than its identity. Sometimes, however, we need to pass a particular instance of an object around. Traditionally, this was achieved with pointers. In fact, C programmers sometimes refer to pointers as references because they provide reference semantics.</p>
+{% highlight cpp %}
+void foo(int*);
+{% endhighlight %}
+	<p>It is intended that a pointer to an <code>int</code> is passed to this function so that it can modify that particular <code>int</code> object. Once again, this is not entirely clear from the type. What happens if we pass a null pointer? How do we know it's not supposed to take an array?</p>
+{% highlight cpp %}
+void foo(int&);
+{% endhighlight %}
+	<p>Here, on the other hand, the intention is clear. C++ has built-in reference types, which neatly express the concept of reference semantics. The passed argument cannot be anything but a valid <code>int</code> object. A reference cannot be null, so we don't even have to worry about that.</p>
+	<p>Whether you should have output parameters at all is another matter. Consider <a href="http://en.cppreference.com/w/cpp/utility/tuple"><code>std::tuple</code></a> for returning multiple outputs. In fact, mutable reference semantics in general can be difficult to reason about because the referenced objects might be modified by multiple parts of your code. If you need reference semantics, prefer <code>const</code> references when possible. Otherwise, use value semantics as much as possible.</p>
+</section>
+<section>
+	<h1>Transferring ownership</h1>
+	<p>When an object is dynamically allocated with <code>new</code>, some code must be responsible for <code>delete</code>ing that object. This code is said to “own” that object. We often want to transfer ownership of an object between parts of our code.</p>
+	<p>As an example of transferring ownership with raw pointers, a common pattern in C libraries is to have functions that allocate objects and return pointers to those objects:</p>
+{% highlight cpp %}
+Image* createImage();
+void destroyImage(Image*);
+{% endhighlight %}
+	<p>It is then expected that the resulting pointer is later passed to the deallocation function when the object is no longer required. This can easily lead to memory leaks if the user fails to deallocate the object correctly. It is not clear at all from the return type that we now have the responsibility of deallocating the object or how we should go about doing so.</p>
+	<p>C++11 introduced a number of smart pointers. These smart pointers represent some particular ownership of a dynamically allocated object. For example, <a href="http://en.cppreference.com/w/cpp/memory/unique_ptr"><code>std::unique_ptr</code></a> represents unique ownership, while <a href="http://en.cppreference.com/w/cpp/memory/shared_ptr"><code>std::shared_ptr</code></a> represents shared ownership. These smart pointers will automatically deallocate the object when all ownership is given up.</p>
+	<p>The previous C-like library interface would now be written as follows:</p>
+{% highlight cpp %}
+std::unique_ptr<Image> createImage();
+{% endhighlight %}
+	<p>This now clearly states that we are being given unique ownership of the <code>Image</code>. That is, the library is promising that it does not hold on to the object. An added bonus is that now you do not need to manually deallocate the <code>Image</code>. This will happen automatically whenever you give up ownership.</p>
+</section>
+<section>
+	<h1>Other uses</h1>
+	<p>Pointers allow polymorphic behavior. That is, calling a virtual member function through a pointer will ensure that the dynamic type of the object will be looked up. This is also supported by references and smart pointers, so the same benefits as above apply here. We should always be able to assume, under the <a href="http://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitution principle</a>, that any of these types that provide reference semantics will happily accept derived types also. There is therefore no additional ambiguity here.</p>
+	<p>Sometimes we want to share a pointer to some object without passing any ownership. When raw pointers are used in this way, they're described as observing or non-owning pointers. There is currently no standard way to express this intent so raw pointers are commonly used and exhibit the same problems we have seen above. There is, however, <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3514.pdf">a proposal</a> to introduce a non-owning smart pointer. Despite this, I suggest that such observing interfaces should use reference types instead.</p>
+	<p>If you require some reference semantics that are not provided by any existing type (and raw pointers are too broad, as usual), why not implement it yourself? A simple type that clearly expresses your intent can go a long way towards improving your code.</p>
+	<p>One of the few acceptable uses of raw pointers is when you need to make sure a function overload is chosen as expected. When the compiler has a choice between a standard conversion and a conversion to a user-defined type, it will always prefer the standard conversion. This can be problematic:</p>
+{% highlight cpp %}
+void foo(bool isSomething);
+void foo(std::string str);
+{% endhighlight %}
+	<p>If you attempt to call this function with a string literal, the first overload will be chosen. The best way to get around this is to provide a C-style string overload that forwards to the <code>std::string</code> overload:</p>
+{% highlight cpp %}
+void foo(char const* str);
+{% endhighlight %}
+	<p>Additionally, if you are dealing with low-level memory manipulation, then you probably do want to use raw pointers. In this case, they genuinely represent your intentions accurately.</p>
+</section>
+<section>
+	<h1>Conclusion</h1>
+	<p>We have seen that raw pointers are pretty bad at expressing intent because they do not sufficiently restrict the values they take. There is almost always a better alternative type you can use. Doing so will drastically improve the safety of your code by avoiding misuse at run-time and allow you to write cleaner, more expressive interfaces. Of course, there are always exceptions, but good code can often get away with very minimal use of raw pointers.</p>
+	<p>Note that the use of raw pointers is independent of the use of <code>new</code> for dynamic allocation. We can pass pointers to objects with automatic or static storage, after all. However, <code>new</code> is equally as problematic and can be avoided by using smart pointers and <abbr title="Resource Acquisition Is Initialization">RAII</abbr> appropriately. My <a href="http://stackoverflow.com/a/22146244/150634">answer on Stack Overflow</a> covers this briefly.</p>
+	<p>For further information, look up more about <a href="http://stackoverflow.com/q/106508/150634">smart pointers</a>, the slides for <a href="http://klmr.me/slides/modern-cpp/">“Don't use f*cking pointers”</a>, and <a href="http://programmers.stackexchange.com/q/56935/80257">“Why are pointers not recommended when coding with C++?”</a>.
+</section>
+]]></content:encoded>
       <dc:date>2014-06-19T00:00:00+01:00</dc:date>
     </item>
     <item>
       <title>Marking as deprecated in C++14</title>
-      <link>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
-      <description>The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.</description>
+      <link>https://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
+      <description><![CDATA[]]></description>
       <pubDate>Mon, 09 Jun 2014 00:00:00 +0100</pubDate>
-      <guid>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</guid>
+      <guid>https://josephmansfield.uk/articles/marking-deprecated-c++14.html</guid>
+      <content:encoded><![CDATA[<p>It is common for entities in source code (functions, classes, etc.) to become obsolete or unsafe as a project undergoes development. It's usually a bad idea to remove those entities without any warning, as it'll break any code that interfaces with those entities. Instead, a good practice is to mark them as <a href="http://en.wikipedia.org/wiki/Deprecation">deprecated</a> in an attempt to discourage their use.</p>
+<p>The upcoming C++ release, <a href="http://en.wikipedia.org/wiki/C%2B%2B14">C++14</a>, introduces the <code>deprecated</code> attribute for specifying that an entity is deprecated. The compiler can then emit warnings whenever these entities are being used. In general, attributes are given as a comma-separated list in double square brackets and can be used in various locations. For example, we can deprecate a function by placing the <code>deprecated</code> attribute at the very beginning of the function declaration:</p>
+
+{% highlight cpp %}
+[[deprecated]]
+void foo() {}
+
+int main() {
+	foo(); // we're using a deprecated function
+}
+{% endhighlight %}
+
+<aside>Other existing attributes include <code>noreturn</code>, <code>carries_dependency</code>, and <code>alignas</code> (which has a different syntax).</aside>
+
+<p>Compiled with the latest build of <a href="http://clang.llvm.org/">clang</a>, this gives the following warning:</p>
+
+{% highlight cpp %}
+warning: 'foo' is deprecated [-Wdeprecated-declarations]
+        foo();
+        ^
+note: 'foo' has been explicitly marked deprecated here
+void foo() {}
+     ^
+{% endhighlight %}
+
+<p>It is also possible to supply a message that may inform the users of the deprecated entity. This message must be given as a string literal in parentheses:
+
+{% highlight cpp %}
+[[deprecated("use bar instead")]]
+void foo() {}
+{% endhighlight %}
+
+<p>This gives the following warning instead:</p>
+
+{% highlight cpp %}
+warning: 'foo' is deprecated: use bar instead [-Wdeprecated-declarations]
+        foo();
+        ^
+note: 'foo' has been explicitly marked deprecated here
+void foo() {}
+     ^
+{% endhighlight %}
+
+<p>The <code>deprecated</code> attribute can also be applied to classes, typedefs, variables, non-static data members, enumerations, and template specializations. Here's a bunch of examples:</p>
+
+{% highlight cpp %}
+// Deprecate a function
+[[deprecated]]
+void foo();
+
+// Deprecate a variable
+[[deprecated]]
+int x;
+
+// Deprecate one declarator in a multi-declarator declaration
+int y [[deprecated]], z;
+
+// Deprecate a function parameter
+int triple([[deprecated]] int x);
+
+// Deprecate a class (or struct)
+class [[deprecated]] my_class {
+	public:
+		// Deprecate a member
+		[[deprecated]] int member;
+};
+
+// Deprecate an enum
+enum [[deprecated]] animals {
+	CAT, DOG, MOUSE
+};
+
+// Deprecate a typedef
+[[deprecated]]
+typedef int type;
+
+// Deprecate a template specialization
+template <typename T> class templ;
+
+template <>
+class [[deprecated]] templ<int> {};
+{% endhighlight %}
+
+<p>For those who are curious about the seemingly inconsistent placement of attributes, such as them appearing after the <code>class</code> and <code>enum</code> keywords, it is to distinguish between the deprecation of such a type and the deprecation of a variable of that type. For example, the following deprecates the variable <code>c</code> and not the class itself:</p>
+
+{% highlight cpp %}
+[[deprecated]] class C { } c;
+{% endhighlight %}
+
+<p>The <code>deprecated</code> attribute need only appear on a single declaration of a particular name or entity in order to mark it as deprecated. That is, later redeclaring without the attribute does not “undeprecate” the declaration. Placing the attribute in a header file declaration will ensure that it appears deprecated to all users of this header file.</p>
+<p>The <code>deprecated</code> attribute is supported by Clang 3.4 and GCC 4.9.</p>
+]]></content:encoded>
       <dc:date>2014-06-09T00:00:00+01:00</dc:date>
     </item>
     <dc:date>2015-01-26T00:00:00+00:00</dc:date>

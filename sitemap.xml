@@ -1,57 +1,69 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://josephmansfield.uk/articles/marking-deprecated-c++14.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/marking-deprecated-c++14.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
         <loc>
-            http://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html
+            https://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html
         </loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/tour-cpp-standard.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/tour-cpp-standard.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/my-ludum-dare-experience.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/blog/my-ludum-dare-experience.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/dont-condition-input-on-eof.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/dont-condition-input-on-eof.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/need-value-pass-by-value.html</loc>
-        <lastmod>2015-01-27T21:20:44+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/need-value-pass-by-value.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</loc>
-        <lastmod>2015-01-27T21:56:40+00:00</lastmod>
+        <loc>https://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/articles/</loc>
-        <lastmod>2015-01-27T21:56:40+00:00</lastmod>
+        <loc>https://josephmansfield.uk/404</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
     </url>
     <url>
-        <loc>http://josephmansfield.uk/</loc>
-        <lastmod>2015-01-27T21:56:40+00:00</lastmod>
+        <loc>https://josephmansfield.uk/blog/</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
+    </url>
+    <url>
+        <loc>https://josephmansfield.uk/articles/</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
+    </url>
+    <url>
+        <loc>https://josephmansfield.uk/</loc>
+        <lastmod>2018-04-17T22:45:07+01:00</lastmod>
+    </url>
+    <url>
+        <loc>https://josephmansfield.uk/styles/screen.css</loc>
+        <lastmod>2018-04-16T15:54:42+01:00</lastmod>
     </url>
 </urlset>

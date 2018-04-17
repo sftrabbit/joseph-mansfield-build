@@ -1,95 +1,102 @@
 <!doctype html>
 <html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#" lang="en">
-	<head>
-		<title>Don't use auto unless you mean it – Joseph Mansfield</title>
-		<meta charset="utf-8">
-		<meta name="description" content="A unified, forward-thinking convention for using the <code>auto</code> keyword in C++: <code>auto</code> means anything. Learn when you should and should not use it.">
-		<meta name="author" content="Joseph Mansfield">
-		<meta name="viewport" content="width=device-width,user-scalable=no">
-		<link rel="author" href="http://josephmansfield.uk">
-		<link rel="logo" type="image/svg" href="/images/logo.svg">
-		<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
-		<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
-		<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-		<link rel="stylesheet" href="/styles/screen.css">
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Roboto+Slab|Ubuntu+Mono">
+  <head>
+    <title>
+      
+        Don't use <code>auto</code> unless you mean it —
+      
+      Joseph Mansfield
+    </title>
+    <meta charset="utf-8">
 
-		<meta name="twitter:card" content="summary">
-		<meta name="twitter:creator" content="@sftrabbit">
-		<meta property="og:title" content="Don't use auto unless you mean it">
-		<meta property="og:site_name" content="Joseph Mansfield">
-		<meta property="og:url" content="http://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html">
-		<meta property="og:description" content="A unified, forward-thinking convention for using the <code>auto</code> keyword in C++: <code>auto</code> means anything. Learn when you should and should not use it.">
-		<meta property="og:image" content="http://josephmansfield.uk/images/logo.png">
-		<meta property="fb:app_id" content="526696677453668">
+  <meta name="description" content="A unified, forward-thinking convention for using the <code>auto</code> keyword in C++: <code>auto</code> means anything. Learn when you should and should not use it.">
 
-		<meta property="og:type" content="article">
-		<meta property="article:author" content="Joseph Mansfield">
-	</head>
-	<body>
-		<header>
-			<div class="container">
-				<a class="contentskip" href="#content">Skip to content</a>
+<meta name="author" content="Joseph Mansfield">
+<meta name="viewport" content="width=device-width,user-scalable=no">
+<link rel="author" href="https://josephmansfield.uk">
+<link rel="logo" type="image/svg" href="/images/logo.svg">
+<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
+<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<link rel="stylesheet" href="/styles/screen.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Ubuntu+Mono">
 
-				<a class="title" href="/">
-					<img src="/images/header-icon.svg" alt="">
-					<h1>Joseph Mansfield</h1>	
-				</a>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@sftrabbit">
+<meta property="og:title" content="Don't use auto unless you mean it">
+<meta property="og:site_name" content="Joseph Mansfield">
+<meta property="og:url" content="https://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html">
+<meta property="og:description" content="A unified, forward-thinking convention for using the <code>auto</code> keyword in C++: <code>auto</code> means anything. Learn when you should and should not use it.">
+<meta property="og:image" content="https://josephmansfield.uk/images/logo.png">
+<meta property="fb:app_id" content="526696677453668">
 
+  </head>
+  <body>
+    <div class="container">
+      <header><a class="contentskip" href="#content">Skip to content</a>
 
-				<ul class="related-resources">
-					<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-white.svg" alt="GitHub"></a></li>
-					<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-white.svg" alt="Stack Overflow"></a></li>
-					<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-white.svg" alt="Twitter"></a></li>
-					<li><a href="https://plus.google.com/+JosephMansfield" title="Google+" rel="external"><img src="/images/gplus-white.svg" alt="Google+"></a></li>
-					<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-white.svg" alt="LinkedIn"></a></li>
-				</ul>
-			</div>
-		</header>
+  <a class="title" href="/">
+    <img src="/images/header-icon.svg" alt="">
+    <h1>Joseph Mansfield</h1>
+  </a>
+  
 
-		<main id="content">
-			<div class="container">
-				<article class="row" itemscope itemtype="http://schema.org/TechArticle">
-					<div class="column-2">
-						<header>
-							<h1 itemprop="name">Don't use <code>auto</code> unless you mean it</h1>
-						</header>
-						<p class="secondary" itemprop="description">A unified, forward-thinking convention for using the <code>auto</code> keyword in C++: <code>auto</code> means anything. Learn when you should and should not use it.</p>
-<p>Since it's repurposing in C++11, <a href="http://en.cppreference.com/w/cpp/language/auto">the <code>auto</code> keyword</a> has largely been used as a convenience. It's one of the more well-known new features, perhaps because many programmers saw it as a way to simplify their code, but also has little consensus on when it should be used. It provides automatic type deduction in declarations based on their initializers. For example, <code>auto x = 5;</code> will deduce that <code>x</code> is an <code>int</code>.</p>
+<ul class="related-resources">
+  <li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external">@sftrabbit</a></li>
+  <li><a href="https://github.com/sftrabbit" title="GitHub" rel="external">GitHub</a></li>
+</ul>
+</header>
+      <main>
+        
+          <hgroup>
+            <h1>Don't use <code>auto</code> unless you mean it</h1>
+            
+              <h2>
+                <time datetime="2014-07-07 00:00:00 +0100">
+                  
+                  7th
+                  
+                  July 2014
+                </time>
+              </h2>
+            
+          </hgroup>
+        
+        <p>Since it's repurposing in C++11, <a href="http://en.cppreference.com/w/cpp/language/auto">the <code>auto</code> keyword</a> has largely been used as a convenience. It's one of the more well-known new features, perhaps because many programmers saw it as a way to simplify their code, but also has little consensus on when it should be used. It provides automatic type deduction in declarations based on their initializers. For example, <code>auto x = 5;</code> will deduce that <code>x</code> is an <code>int</code>.</p>
 <p>To beginner C++ programmers, <code>auto</code> may look like it provides dynamic typing as in JavaScript or Python. This is not the case. The type is still completely static because the type of the initializer is static too. Even if it were a declaration inside a function template, in which the initializer could have a different type depending on the particular template arguments, the type is static for each template instantiation and those template instantiations are themselves static. C++ is still a statically typed language.</p>
 <p>For many, <code>auto</code> is seen as a way to increase the brevity of code and hide away ugly C-style declarations, with the intention of making it easier to read and faster to write. After all, <code>auto</code> can save us from typing out the hideously long types we often find in C++. Some suggest to use <code>auto</code> as much as possible. I strongly feel that hiding away types is a stylistic choice and therefore the responsibility of the IDE and not of type deduction. Also, this is a difficult convention to stick to because it's hard to agree on whether a particular use is acceptable or not. Consider the following:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="c1">// Assuming range-based std::max_element</span>
-<span class="k">auto</span> <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">max_element</span><span class="p">(</span><span class="n">employees</span><span class="p">,</span> <span class="n">LessSuitableForTask</span><span class="p">{</span><span class="n">task</span><span class="p">});</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="c1">// Assuming range-based std::max_element</span>
+<span class="k">auto</span> <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">max_element</span><span class="p">(</span><span class="n">employees</span><span class="p">,</span> <span class="n">LessSuitableForTask</span><span class="p">{</span><span class="n">task</span><span class="p">});</span></code></pre></figure>
 
 <p>Is it clear what we can do with <code>best_candidate</code>? Is it the maximum value or an iterator pointing at the maximum value? If it's an iterator, what kind of iterator? For somebody who is fairly comfortable with C++, perhaps this might be obvious. For anybody else, we'd have to look up the definition of <code>std::max_element</code> just to find out what its return type is and then figure out what that type represents. This convention is therefore a matter of deciding how proficient a person needs to be to understand your code. If the initializer used functions and types from some other library, the reader has to be proficient with those also. When using <code>auto</code>, you are arbitrarily making the choice of whether it is acceptable or not. Additionally, if the initializer changes to give a type that is no longer suitable, you'll get errors from further down the code. This doesn't sound great to me.</p>
 <p>Instead of using <code>auto</code> so much, my proposed convention is as follows: <i>choose types that impose the minimum requirements on a declaration that are necessary for the code in which it is used to behave correctly</i>. Under this convention, <code>auto</code> imposes no requirements. It says “This variable can have any type and the code in which it is used will run just fine regardless.” This gives <code>auto</code> some meaningful semantics. You may correctly observe that this means we have only two choices: no requirements with <code>auto,</code> or no leniency with the actual type itself. That is, for now.</p>
 <p>A proposal to introduce concepts to C++ is in the works (<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4040.pdf">N4040</a> is the latest draft at the time of writing). Concepts would allow us to place requirements (called constraints) on template arguments. At the moment, a template argument (like <code>typename T</code>) will accept any type, which results in horrible errors being thrown from the internals of the template if that type is not appropriate. Go ahead; try doing something like <code>std::copy(5, 10, “foo”)</code> and enjoy the mess. Worse, it could compile fine and behave erratically. With concepts we'll be able to specify requirements on the arguments:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="k">template</span> <span class="o">&lt;</span><span class="n">InputIterator</span> <span class="n">InputIt</span><span class="p">,</span> <span class="n">OutputIterator</span> <span class="n">OutputIt</span><span class="o">&gt;</span>
-<span class="n">OutputIt</span> <span class="n">copy</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">OutputIt</span> <span class="n">d_first</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">InputIterator</span> <span class="n">InputIt</span><span class="p">,</span> <span class="n">OutputIterator</span> <span class="n">OutputIt</span><span class="o">&gt;</span>
+<span class="n">OutputIt</span> <span class="n">copy</span><span class="p">(</span><span class="n">InputIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">OutputIt</span> <span class="n">d_first</span><span class="p">);</span></code></pre></figure>
 
 <p>In fact, a terse syntax is also proposed which will allow us to use concept names in the argument declarations themselves:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="k">auto</span> <span class="n">copy</span><span class="p">(</span><span class="n">InputIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIterator</span> <span class="n">last</span><span class="p">,</span> <span class="n">OutputIterator</span> <span class="n">d_first</span><span class="p">)</span>
-  <span class="o">-&gt;</span> <span class="n">OutputIterator</span><span class="p">;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">auto</span> <span class="nf">copy</span><span class="p">(</span><span class="n">InputIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">InputIterator</span> <span class="n">last</span><span class="p">,</span> <span class="n">OutputIterator</span> <span class="n">d_first</span><span class="p">)</span>
+  <span class="o">-&gt;</span> <span class="n">OutputIterator</span><span class="p">;</span></code></pre></figure>
 
 <p>So with concepts, saying that a parameter is an <a href="http://en.cppreference.com/w/cpp/concept/InputIterator"><code>InputIterator</code></a> says that the arguments should meet the requirements imposed by the <code>InputIterator</code> concept. If you pass something that doesn't, you'll get a nice clean error message.</p>
 <p>We can also use <code>auto</code> in this terse syntax as the equivalent of <code>typename T</code> with no constraints:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="k">auto</span> <span class="n">something</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="k">auto</span> <span class="n">something</span><span class="p">);</span></code></pre></figure>
 
 <p>Given the semantics of concepts for arguments, this means “I impose no requirements on the type of <code>something</code>.” Anything will do. This syntax is also being introduced for generic lambdas in C++14:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="k">auto</span> <span class="n">add</span> <span class="o">=</span> <span class="p">[](</span><span class="k">auto</span> <span class="n">x</span><span class="p">,</span> <span class="k">auto</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;};</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">auto</span> <span class="n">add</span> <span class="o">=</span> <span class="p">[](</span><span class="k">auto</span> <span class="n">x</span><span class="p">,</span> <span class="k">auto</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;};</span></code></pre></figure>
 
 <p>It's intended that concepts will eventually be usable in normal variable declarations too, although a proposal has not yet been written. The previous <code>std::max_element</code> example could then be written:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">InputIterator</span> <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">max_element</span><span class="p">(</span><span class="n">employees</span><span class="p">,</span> <span class="n">LessSuitableForTask</span><span class="p">{</span><span class="n">task</span><span class="p">});</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">InputIterator</span> <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">max_element</span><span class="p">(</span><span class="n">employees</span><span class="p">,</span> <span class="n">LessSuitableForTask</span><span class="p">{</span><span class="n">task</span><span class="p">});</span></code></pre></figure>
 
 <p>This implies that any use of <code>best_candidate</code> only requires that it meets the requirements of an <code>InputIterator</code>. We are hiding away the actual type of the iterator, but not hiding the information that is actually important. On the other hand, <code>auto</code> hides everything. You can hopefully now see that the convention I have proposed unifies the declarations of both function arguments and variables:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">some_type</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must be convertible to some_type */</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">some_type</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must be convertible to some_type */</span><span class="p">;</span>
 <span class="n">SomeConcept</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must meet SomeConcept requirements */</span><span class="p">;</span>
 <span class="n">MoreGeneralConcept</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* must meet MoreGeneralConcept requirements */</span><span class="p">;</span>
 <span class="k">auto</span> <span class="n">name</span> <span class="o">=</span> <span class="cm">/* can be anything */</span><span class="p">;</span>
@@ -97,15 +104,15 @@
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">some_type</span><span class="p">);</span> <span class="c1">// must take something convertible to some_type</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">SomeConcept</span><span class="p">);</span> <span class="c1">// must take something that meets SomeConcept requirements</span>
 <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">MoreGeneralConcept</span><span class="p">);</span> <span class="c1">// must take something that meets MoreGeneralConcept requirements</span>
-<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="k">auto</span><span class="p">);</span> <span class="c1">// can take anything</span></code></pre></div>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="k">auto</span><span class="p">);</span> <span class="c1">// can take anything</span></code></pre></figure>
 
 <p>In both cases, you give the type or concept that has the least requirements required in order to use that object in the way you want to. Under this rule, <code>auto</code> means anything. Likewise, <code>auto&</code> means an lvalue reference to anything, <code>auto&&</code> is a <a href="http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers">universal reference</a>, and so on.</p>
 <p>This convention has multiple additional benefits. In the same way that template arguments allow the arguments to a function to change type, using concepts and <code>auto</code> allows the initializer of a declaration to change. As long as the initializer returns an object that meets the requirements, everything is fine. It also ensures that a nice clean error will be reported if a type is used that doesn't meet the requirements, unlike using <code>auto</code> which has the same problems as templates do today. It also makes the code easier to read than if <code>auto</code> were used for everything because you only need to understand what the type or concept represents. Also, concept names are brief and to the point.</p>
 <p>If you see <code>auto</code> under this convention, it means you really, really do not need to care about the variable's type. This means it should be used significantly less than it is being used now. For example, I would not use it in a range-based <code>for</code> loop unless I could really be iterating over anything. Instead, I'd use the type itself:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="k">for</span> <span class="p">(</span><span class="n">contact_details</span> <span class="n">contact</span> <span class="o">:</span> <span class="n">contacts</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">for</span> <span class="p">(</span><span class="n">contact_details</span> <span class="nl">contact</span> <span class="p">:</span> <span class="n">contacts</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">send_email</span><span class="p">(</span><span class="n">contact</span><span class="p">.</span><span class="n">get_email_address</span><span class="p">(),</span> <span class="s">&quot;Hello, World!&quot;</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>In this example, I'm calling <code>contact_details::get_email_address</code>, which means that <code>contact</code> has to be a <code>contact_details</code> object. This has a number of advantages over using <code>auto</code>:</p>
 <ol>
@@ -117,112 +124,30 @@
 <p>I'd say it's also better than writing <code>decltype(v)::value_type</code> because that ties the declaration to the initializer by assuming that it has a <code>value_type</code> typedef. Really, <code>contact</code> doesn't need to care.</p>
 <p>If I were writing a generic loop that could iterate over any kind of object and process it, <code>auto</code> would be fine:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">element</span> <span class="o">:</span> <span class="n">range</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">element</span> <span class="p">:</span> <span class="n">range</span><span class="p">)</span> <span class="p">{</span>
 	  <span class="n">process</span><span class="p">(</span><span class="n">element</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Since concepts won't be around until C++17 and the ability to use concepts in normal variable declarations may not appear until later, this convention requires a lot of patience. Just don't get too excited about <code>auto</code> and use it everywhere. Instead, use it with some idea of how it will be used in the future. For now, use specific types in most cases. It's better to be overly specific than overly general, because using <code>auto</code> unnecessarily can lead to unclear code and confusing bugs. Using it too much now will make your code less idiomatic in the future. The only downside will be that if you change the type of the initializer, you'll have to change the type of the declaration, but that shouldn't happen too often. Obviously for now we need to be overly general with templates, otherwise they'd be useless, but for declarations we should prefer to be specific.</p>
 <p>Herb Sutter has previously proposed <a href="http://herbsutter.com/2013/08/12/gotw-94-solution-aaa-style-almost-always-auto/">AAA Style</a> (Almost Always Auto), which is pretty much the opposite of what I'm suggesting. However, we don't entirely disagree. Many of his arguments actually back up what I'm suggesting, particularly in terms of writing against interfaces instead of implementations. In his <code>append_unique</code> example, he remarks that <code>Container& c</code> makes it clear what the requirements of <code>c</code> are. This is simply mimicking what concepts will provide and is certainly a good practice for template arguments while we don't have them. However, <code>auto</code> doesn't have this benefit at all. Instead, <code>auto</code> is like writing <code>typename T</code> without any information about requirements. It certainly is less readable, perhaps not for the writer of the code, but for anybody else who wants to read and understand it.</p>
 <p>One problem that the AAA Style tries to solve, which I do not, is the horrible C declaration grammar. By using <code>auto</code> everywhere, we can easily see that a line is a variable declaration and we don't have to decode its type. Firstly, I don't think this should be the responsibility of <code>auto</code>, which is a much more powerful tool than a <code>var</code>-like keyword. Secondly, we can generally avoid the incredibly ugly type names and concepts will help us to do this.</p>
 <p>In summary, <code>auto</code> means anything. Only use it when you mean it, otherwise you make your code harder to read and introduce further problems. Just be patient for concepts, which will make this convention unified and logical. It'll pay off.</p>
 
-					</div>
-					<div class="column-1">
-
-						<ins class="adsbygoogle josephmansfield-article-side" data-ad-client="ca-pub-6789411983750873" data-ad-slot="7401738733"></ins>
-
-						<footer>
-							<img class="author-photo" src="http://www.gravatar.com/avatar/9f438bc04462ee5af4132921a3474842.png?s=128" alt="Joseph Mansfield">
-							<p class="author">Written by <a class="author-name" href="/" rel="author" itemprop="author">Joseph Mansfield</a></p>
-							<ul class="related-resources">
-								<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-color.svg" alt="GitHub"></a></li>
-								<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-color.svg" alt="Stack Overflow"></a></li>
-								<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-color.svg" alt="Twitter"></a></li>
-								<li><a href="https://plus.google.com/+JosephMansfield?rel=author" title="Google+" rel="external"><img src="/images/gplus-color.svg" alt="Google+"></a></li>
-								<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-color.svg" alt="LinkedIn"></a></li>
-							</ul>
-
-							<p><small>Notice any mistakes? <a href="https://github.com/sftrabbit/JosephMansfieldArticles/blob/master/2014-07-07-dont-use-auto-unless-you-mean-it.html">Fork the article on GitHub</a>.</small></p>
-						</footer>
-					</div>
-				</article>
-
-				<div class="row">
-					<div class="column-2">
-						<ins class="adsbygoogle josephmansfield-article-bottom" data-ad-client="ca-pub-6789411983750873" data-ad-slot="2589226334"></ins>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="column-2">
-						<div id="disqus_thread"></div>
-					</div>
-					<section class="column-1">
-						<h1>Share this article</h1>
-						<ul class="share-buttons">
-							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-height="24">Share on Google+</div></li>
-							<li><a href="https://twitter.com/share" class="twitter-share-button" data-text="Don't use auto unless you mean it" data-size="large" data-via="sftrabbit">Share on Twitter</a></li>
-							<li class="facebook"><div class="fb-like" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div></li>
-						</ul>
-					</section>
-				</div>
-			</div>
-			<div class="alt">
-				<div class="container">
-					<div class="row">
-
-
-						<section class="column-2">
-							<h1>Want something else to read?</h1>
-									<article>
-										<h1><a href="/articles/avoiding-ambiguity-raw-pointers.html">Ambiguous raw pointers</a></h1>
-										<p class="secondary">A look at the properties of raw pointers, an abundant source of bugs and confusion for C++ programmers, that make them unsuitable for modern code.</p>
-										<p><a href="/articles/avoiding-ambiguity-raw-pointers.html">Read this C++ article →</a></p>
-									</article>
-
-						</section>
-
-						<section class="column-1">
-							<h1><img src="//feedburner.google.com/fb/images/pub/feed-icon16x16.png" alt=""> Hear about new articles</h1>
-							<p class="secondary">Subscribe to <a href="http://feeds.feedburner.com/JosephMansfield" rel="alternate external" type="application/rss+xml">the RSS feed</a> with your favourite news feed reader.</p>
-						</section>
-					</div>
-					<div class="row">
-						<div class="column-2">
-							<p><a class="button" href="/articles/">More articles…</a></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-		<footer>
-			<div class="container">
-				<div class="row">
-					<div class="column-2">
-						<p>&copy; Joseph Mansfield. Content licensed under a <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external"><abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr></a> license.</p>
-
-					</div>
-					<div class="column-1 social-buttons">
-						<div><a href="https://twitter.com/sftrabbit" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sftrabbit</a></div>
-						<div class="g-follow" data-height="24" data-href="https://plus.google.com/+JosephMansfield" data-rel="author"></div>
-					</div>
-				</div>
-			</div>
-		</footer>
-
-
-		<div id="fb-root"></div>
-		<script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script>
-
-		<script async>
-(function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-
+        
+          <div id="disqus_thread"></div>
+        
+      </main>
+      <footer><p>
+  &copy; Joseph Mansfield. Content licensed under a
+  <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external">
+    <abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr>
+  </a>
+  license.
+</p>
+</footer>
+    </div>
+    
+<script async>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -231,26 +156,6 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', 'UA-17335804-2', 'auto');
 ga('send', 'pageview');
 
-
-adsbygoogle = window.adsbygoogle || [];
-adsbygoogle.push({});
-adsbygoogle.push({});
-
-(function() {
-  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-  po.src = 'https://apis.google.com/js/plusone.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-
-(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&appId=526696677453668&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
 
 var disqus_shortname = 'josephmansfield';
 var disqus_identifier = '/articles/dont-use-auto-unless-you-mean-it';
@@ -262,8 +167,7 @@ var disqus_title = "Don't use auto unless you mean it";
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 })();
 
+</script>
 
-		</script>
-
-	</body>
+  </body>
 </html>

@@ -1,61 +1,68 @@
 <!doctype html>
 <html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#" lang="en">
-	<head>
-		<title>The lvalue/rvalue metaphor – Joseph Mansfield</title>
-		<meta charset="utf-8">
-		<meta name="description" content="A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.">
-		<meta name="author" content="Joseph Mansfield">
-		<meta name="viewport" content="width=device-width,user-scalable=no">
-		<link rel="author" href="http://josephmansfield.uk">
-		<link rel="logo" type="image/svg" href="/images/logo.svg">
-		<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
-		<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
-		<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-		<link rel="stylesheet" href="/styles/screen.css">
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Roboto+Slab|Ubuntu+Mono">
+  <head>
+    <title>
+      
+        The lvalue/rvalue metaphor —
+      
+      Joseph Mansfield
+    </title>
+    <meta charset="utf-8">
 
-		<meta name="twitter:card" content="summary">
-		<meta name="twitter:creator" content="@sftrabbit">
-		<meta property="og:title" content="The lvalue/rvalue metaphor">
-		<meta property="og:site_name" content="Joseph Mansfield">
-		<meta property="og:url" content="http://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html">
-		<meta property="og:description" content="A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.">
-		<meta property="og:image" content="http://josephmansfield.uk/images/logo.png">
-		<meta property="fb:app_id" content="526696677453668">
+  <meta name="description" content="A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.">
 
-		<meta property="og:type" content="article">
-		<meta property="article:author" content="Joseph Mansfield">
-	</head>
-	<body>
-		<header>
-			<div class="container">
-				<a class="contentskip" href="#content">Skip to content</a>
+<meta name="author" content="Joseph Mansfield">
+<meta name="viewport" content="width=device-width,user-scalable=no">
+<link rel="author" href="https://josephmansfield.uk">
+<link rel="logo" type="image/svg" href="/images/logo.svg">
+<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
+<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<link rel="stylesheet" href="/styles/screen.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Ubuntu+Mono">
 
-				<a class="title" href="/">
-					<img src="/images/header-icon.svg" alt="">
-					<h1>Joseph Mansfield</h1>	
-				</a>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@sftrabbit">
+<meta property="og:title" content="The lvalue/rvalue metaphor">
+<meta property="og:site_name" content="Joseph Mansfield">
+<meta property="og:url" content="https://josephmansfield.uk/articles/lvalue-rvalue-metaphor.html">
+<meta property="og:description" content="A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.">
+<meta property="og:image" content="https://josephmansfield.uk/images/logo.png">
+<meta property="fb:app_id" content="526696677453668">
 
+  </head>
+  <body>
+    <div class="container">
+      <header><a class="contentskip" href="#content">Skip to content</a>
 
-				<ul class="related-resources">
-					<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-white.svg" alt="GitHub"></a></li>
-					<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-white.svg" alt="Stack Overflow"></a></li>
-					<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-white.svg" alt="Twitter"></a></li>
-					<li><a href="https://plus.google.com/+JosephMansfield" title="Google+" rel="external"><img src="/images/gplus-white.svg" alt="Google+"></a></li>
-					<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-white.svg" alt="LinkedIn"></a></li>
-				</ul>
-			</div>
-		</header>
+  <a class="title" href="/">
+    <img src="/images/header-icon.svg" alt="">
+    <h1>Joseph Mansfield</h1>
+  </a>
+  
 
-		<main id="content">
-			<div class="container">
-				<article class="row" itemscope itemtype="http://schema.org/TechArticle">
-					<div class="column-2">
-						<header>
-							<h1 itemprop="name">The lvalue/rvalue metaphor</h1>
-						</header>
-						<p class="secondary" itemprop="description">A simple interpretation of the mysterious value categories of C++: lvalues represent objects and rvalues represent values.</p>
-<p>Every expression in C++ is either an lvalue or an rvalue. This distinction is what makes something like <code>5 = x;</code> invalid, as the expression <code>5</code> is an rvalue expression and so cannot appear on the left of an assignment. This is in fact where the terms originate: only lvalues can appear on the left of an assignment, while rvalues must appear on the right <a href="#c++14" class="reference">[1] §3.10</a>. However, this only really describes one particular case, so isn't useful for a general understanding of lvalues and rvalues.</p>
+<ul class="related-resources">
+  <li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external">@sftrabbit</a></li>
+  <li><a href="https://github.com/sftrabbit" title="GitHub" rel="external">GitHub</a></li>
+</ul>
+</header>
+      <main>
+        
+          <hgroup>
+            <h1>The lvalue/rvalue metaphor</h1>
+            
+              <h2>
+                <time datetime="2015-01-26 00:00:00 +0000">
+                  
+                  26th
+                  
+                  January 2015
+                </time>
+              </h2>
+            
+          </hgroup>
+        
+        <p>Every expression in C++ is either an lvalue or an rvalue. This distinction is what makes something like <code>5 = x;</code> invalid, as the expression <code>5</code> is an rvalue expression and so cannot appear on the left of an assignment. This is in fact where the terms originate: only lvalues can appear on the left of an assignment, while rvalues must appear on the right <a href="#c++14" class="reference">[1] §3.10</a>. However, this only really describes one particular case, so isn't useful for a general understanding of lvalues and rvalues.</p>
 <p>For beginners, these <a href="http://en.cppreference.com/w/cpp/language/value_category">value categories</a> are a mild curiosity that appear only in error messages (for the above expression, GCC tells us "lvalue required as left operand of assignment"). However, since the introduction of move semantics and rvalue references in <a href="http://en.wikipedia.org/wiki/C%2B%2B11">C++11</a>, it has become more important than ever to understand them. One could try to learn every lvalue/rvalue rule in the standard, but there is a simple interpretation that can help you understand their purpose and reason about them. Lvalues and rvalues are just metaphors:</p>
 <ul>
 	<li>Lvalues represent objects and rvalues represent values.</li>
@@ -70,29 +77,29 @@
 	<p>Every useful C++ program revolves around the manipulation of objects, which are regions of memory created at runtime in which we store values. A simple <code>int x;</code>, for example, creates an object for storing integer values.</p>
 	<p>We also come across values that do not belong to any particular object. For example, the literal <code>5</code> represents the abstract value of 5, but is not stored in any object. Similarly, if we have two <code>int</code> objects, <code>x</code> and <code>y</code>, the expression <code>x + y</code> gives us a value representing the result of the addition &mdash; this value is also not stored in an object.</p>
 	<p>A simple interpretation of lvalues and rvalues is that <b>lvalues represent objects and rvalues represent values</b>. In the following code, <code>x</code> denotes an object, so it's an lvalue. <code>x + 5</code> denotes a value, so it's an rvalue. The subexpression <code>5</code> is also an rvalue.</p>
-	
-	<div class="highlight"><pre><code class="cpp"><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="c1">// the argument is an lvalue expression</span>
 	<span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">);</span> <span class="c1">// the argument is an rvalue expression</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 	<p>I'm being careful here by using the word "represent". The truth is that rvalue expressions can denote objects too, but they still <em>represent</em> values. For example, some rvalue expressions result in the creation of a temporary object &mdash; such as a function call that returns by value <a href="#c++14" class="reference">[1] §5.2.2</a>. Although an object does really exist here, the expression can still be thought of as just representing a value of that type. Consider this function:</p>
-	
-	<div class="highlight"><pre><code class="cpp"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_message</span><span class="p">()</span> <span class="p">{</span>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_message</span><span class="p">()</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="s">&quot;Hello, World!&quot;</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
-	
+<span class="p">}</span></code></pre></figure>
+
 	<p>Elsewhere in your code, the function call <code>get_message()</code> denotes the value of an <code>std::string</code> containing "Hello, World!", rather than a persistent object that you are going to manipulate.</p>
 	<aside>
 		<p>Technically these are two kinds of rvalue: expressions denoting truly abstract values are prvalues (pure), while expressions denoting short-lived objects are called xvalues (expiring) <a href="#c++14" class="reference">[1] §3.10</a>.</p>
-		<img src="http://josephmansfield.uk/media/images/lvalues-rvalues.png" alt="Rvalues are split into xvalues and prvalues. Lvalues and xvalues together are known as glvalues.">
+		<img src="/media/images/lvalues-rvalues.png" alt="Rvalues are split into xvalues and prvalues. Lvalues and xvalues together are known as glvalues.">
 	</aside>
 </section>
 
 <section>
 	<h1>Lvalue-to-rvalue conversion</h1>
-	
+
 	<p>Most operators in C++ expect rvalues (values) as their operands <a href="#c++14" class="reference">[1] §5</a>. If we want to perform addition, for example, we just need two values to add together &mdash; we don't care if they belong to objects. A notable exception is the assignment operator, which requires an lvalue (object) for its left operand <a href="#c++14" class="reference">[1] §5.17</a>. This is also logical &mdash; assignment needs an object in which to store something.</p>
 	<p>We can, however, also use lvalues where rvalues are expected &mdash; this is permitted by the implicit <dfn>lvalue-to-rvalue conversion</dfn> <a href="#c++14" class="reference">[1] §4.1</a>. Once again, this makes sense &mdash; if we provide an object where a value is expected, we can just read the value of the object. That is, <b>lvalue-to-rvalue conversion represents reading the value of an object</b>..</p>
 	<aside><p>Lvalue-to-rvalue conversion actually converts both lvalues and xvalues to prvalues. As we saw, an xvalue also denotes an object behind the scenes so we have to read its value too. Lvalues and xvalues are collectively known as glvalues (general).</p></aside>
@@ -100,26 +107,26 @@
 
 <section>
 	<h1>Moving and forwarding</h1>
-	
+
 	<p>Both <a href="http://en.cppreference.com/w/cpp/utility/move"><code>std::move</code></a> and <a href="http://en.cppreference.com/w/cpp/utility/forward"><code>std::forward</code></a> give you super powers: the ability to manipulate the value category of an expression.</p>
 	<p>A call to <code>std::move</code> is always an rvalue (value) expression. Because of this, <b><code>std::move</code> allows you to treat any expression as though it represents a value</b>. What's the purpose of this? Well, objects are persistent regions of storage that we don't expect to change when doing non-destructive operations on them. However, if we know that we don't need the object any longer, we can often use destructive yet more efficient implementations. Values are inherently transient, so treating an object like a value allows us to perform these more efficient operations. For example, by treating objects as values, we can efficiently steal their resources when copying them (which we call <dfn>moving</dfn>, rather than copying). Look up <a href="http://stackoverflow.com/q/3106110/150634">move semantics</a> to find out how to implement this for your classes.</p>
 	<p>In some cases, C++ will silently do this, treating your lvalues as rvalues <a href="#c++14" class="reference">[1] §12.8</a> (as though you had <code>std::move</code>d them). For example, when returning a local object from a function, the compiler knows that the object is no longer required and so can treat the returned expression as though it just represents a transient value:</p>
-	
-	<div class="highlight"><pre><code class="cpp"><span class="n">widget</span> <span class="nf">foo</span><span class="p">()</span>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">widget</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
 	<span class="n">widget</span> <span class="n">w</span><span class="p">;</span>
 	<span class="c1">// ...</span>
 	<span class="k">return</span> <span class="n">w</span><span class="p">;</span> <span class="c1">// the expression w is an lvalue, but is treated as an rvalue</span>
-<span class="p">}</span></code></pre></div>
-	
+<span class="p">}</span></code></pre></figure>
+
 	<p><code>std::forward</code> relies on a neat little trick involving type deduction and reference collapsing. Consider the following example:</p>
-	
-	<div class="highlight"><pre><code class="cpp"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-<span class="kt">void</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">x</span><span class="p">)</span> 
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">x</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="n">foo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
-<span class="p">}</span></code></pre></div>
-	
+<span class="p">}</span></code></pre></figure>
+
 	<p>When the argument passed to <code>wrapper</code> is an lvalue expression of type <code>widget</code>, <code>x</code> is deduced to be of type <code>widget&</code>. When it is an rvalue expression, <code>x</code> is of type <code>widget&&</code>. In both cases, the expression <code>x</code> will just be an lvalue. However, the <code>std::forward</code> function is cleverly designed so that <code>std::forward<T>(x)</code> is an lvalue in the first case and an rvalue in the second case. Therefore, <b><code>std::forward</code> allows you to preserve whether an expression represented an object or a value</b>.</p>
 </section>
 
@@ -131,103 +138,21 @@
 
 <p><a id="c++14">[1] International Standard ISO/IEC 14882:2014(E) Programming Language C++</a></p>
 
-					</div>
-					<div class="column-1">
-
-						<ins class="adsbygoogle josephmansfield-article-side" data-ad-client="ca-pub-6789411983750873" data-ad-slot="7401738733"></ins>
-
-						<footer>
-							<img class="author-photo" src="http://www.gravatar.com/avatar/9f438bc04462ee5af4132921a3474842.png?s=128" alt="Joseph Mansfield">
-							<p class="author">Written by <a class="author-name" href="/" rel="author" itemprop="author">Joseph Mansfield</a></p>
-							<ul class="related-resources">
-								<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-color.svg" alt="GitHub"></a></li>
-								<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-color.svg" alt="Stack Overflow"></a></li>
-								<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-color.svg" alt="Twitter"></a></li>
-								<li><a href="https://plus.google.com/+JosephMansfield?rel=author" title="Google+" rel="external"><img src="/images/gplus-color.svg" alt="Google+"></a></li>
-								<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-color.svg" alt="LinkedIn"></a></li>
-							</ul>
-
-							<p><small>Notice any mistakes? <a href="https://github.com/sftrabbit/JosephMansfieldArticles/blob/master/2015-01-26-lvalue-rvalue-metaphor.html">Fork the article on GitHub</a>.</small></p>
-						</footer>
-					</div>
-				</article>
-
-				<div class="row">
-					<div class="column-2">
-						<ins class="adsbygoogle josephmansfield-article-bottom" data-ad-client="ca-pub-6789411983750873" data-ad-slot="2589226334"></ins>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="column-2">
-						<div id="disqus_thread"></div>
-					</div>
-					<section class="column-1">
-						<h1>Share this article</h1>
-						<ul class="share-buttons">
-							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-height="24">Share on Google+</div></li>
-							<li><a href="https://twitter.com/share" class="twitter-share-button" data-text="The lvalue/rvalue metaphor" data-size="large" data-via="sftrabbit">Share on Twitter</a></li>
-							<li class="facebook"><div class="fb-like" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div></li>
-						</ul>
-					</section>
-				</div>
-			</div>
-			<div class="alt">
-				<div class="container">
-					<div class="row">
-
-
-						<section class="column-2">
-							<h1>Want something else to read?</h1>
-									<article>
-										<h1><a href="/articles/c++-sequenced-before-graphs.html">C++ sequenced-before graphs</a></h1>
-										<p class="secondary">A visual method for identifying and understanding undefined behavior in expressions.</p>
-										<p><a href="/articles/c++-sequenced-before-graphs.html">Read this C++ article →</a></p>
-									</article>
-
-						</section>
-
-						<section class="column-1">
-							<h1><img src="//feedburner.google.com/fb/images/pub/feed-icon16x16.png" alt=""> Hear about new articles</h1>
-							<p class="secondary">Subscribe to <a href="http://feeds.feedburner.com/JosephMansfield" rel="alternate external" type="application/rss+xml">the RSS feed</a> with your favourite news feed reader.</p>
-						</section>
-					</div>
-					<div class="row">
-						<div class="column-2">
-							<p><a class="button" href="/articles/">More articles…</a></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-		<footer>
-			<div class="container">
-				<div class="row">
-					<div class="column-2">
-						<p>&copy; Joseph Mansfield. Content licensed under a <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external"><abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr></a> license.</p>
-
-					</div>
-					<div class="column-1 social-buttons">
-						<div><a href="https://twitter.com/sftrabbit" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sftrabbit</a></div>
-						<div class="g-follow" data-height="24" data-href="https://plus.google.com/+JosephMansfield" data-rel="author"></div>
-					</div>
-				</div>
-			</div>
-		</footer>
-
-
-		<div id="fb-root"></div>
-		<script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script>
-
-		<script async>
-(function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-
+        
+          <div id="disqus_thread"></div>
+        
+      </main>
+      <footer><p>
+  &copy; Joseph Mansfield. Content licensed under a
+  <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external">
+    <abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr>
+  </a>
+  license.
+</p>
+</footer>
+    </div>
+    
+<script async>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -236,26 +161,6 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', 'UA-17335804-2', 'auto');
 ga('send', 'pageview');
 
-
-adsbygoogle = window.adsbygoogle || [];
-adsbygoogle.push({});
-adsbygoogle.push({});
-
-(function() {
-  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-  po.src = 'https://apis.google.com/js/plusone.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-
-(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&appId=526696677453668&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
 
 var disqus_shortname = 'josephmansfield';
 var disqus_identifier = '/articles/lvalue-rvalue-metaphor';
@@ -267,8 +172,7 @@ var disqus_title = "The lvalue/rvalue metaphor";
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 })();
 
+</script>
 
-		</script>
-
-	</body>
+  </body>
 </html>

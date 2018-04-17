@@ -1,61 +1,68 @@
 <!doctype html>
 <html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#" lang="en">
-	<head>
-		<title>Exceptions, error codes, and assertions in C++ – Joseph Mansfield</title>
-		<meta charset="utf-8">
-		<meta name="description" content="An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.">
-		<meta name="author" content="Joseph Mansfield">
-		<meta name="viewport" content="width=device-width,user-scalable=no">
-		<link rel="author" href="http://josephmansfield.uk">
-		<link rel="logo" type="image/svg" href="/images/logo.svg">
-		<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
-		<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
-		<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-		<link rel="stylesheet" href="/styles/screen.css">
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Roboto+Slab|Ubuntu+Mono">
+  <head>
+    <title>
+      
+        Exceptions, error codes, and assertions in C++ —
+      
+      Joseph Mansfield
+    </title>
+    <meta charset="utf-8">
 
-		<meta name="twitter:card" content="summary">
-		<meta name="twitter:creator" content="@sftrabbit">
-		<meta property="og:title" content="Exceptions, error codes, and assertions in C++">
-		<meta property="og:site_name" content="Joseph Mansfield">
-		<meta property="og:url" content="http://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html">
-		<meta property="og:description" content="An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.">
-		<meta property="og:image" content="http://josephmansfield.uk/images/logo.png">
-		<meta property="fb:app_id" content="526696677453668">
+  <meta name="description" content="An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.">
 
-		<meta property="og:type" content="article">
-		<meta property="article:author" content="Joseph Mansfield">
-	</head>
-	<body>
-		<header>
-			<div class="container">
-				<a class="contentskip" href="#content">Skip to content</a>
+<meta name="author" content="Joseph Mansfield">
+<meta name="viewport" content="width=device-width,user-scalable=no">
+<link rel="author" href="https://josephmansfield.uk">
+<link rel="logo" type="image/svg" href="/images/logo.svg">
+<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
+<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<link rel="stylesheet" href="/styles/screen.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Ubuntu+Mono">
 
-				<a class="title" href="/">
-					<img src="/images/header-icon.svg" alt="">
-					<h1>Joseph Mansfield</h1>	
-				</a>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@sftrabbit">
+<meta property="og:title" content="Exceptions, error codes, and assertions in C++">
+<meta property="og:site_name" content="Joseph Mansfield">
+<meta property="og:url" content="https://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html">
+<meta property="og:description" content="An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.">
+<meta property="og:image" content="https://josephmansfield.uk/images/logo.png">
+<meta property="fb:app_id" content="526696677453668">
 
+  </head>
+  <body>
+    <div class="container">
+      <header><a class="contentskip" href="#content">Skip to content</a>
 
-				<ul class="related-resources">
-					<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-white.svg" alt="GitHub"></a></li>
-					<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-white.svg" alt="Stack Overflow"></a></li>
-					<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-white.svg" alt="Twitter"></a></li>
-					<li><a href="https://plus.google.com/+JosephMansfield" title="Google+" rel="external"><img src="/images/gplus-white.svg" alt="Google+"></a></li>
-					<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-white.svg" alt="LinkedIn"></a></li>
-				</ul>
-			</div>
-		</header>
+  <a class="title" href="/">
+    <img src="/images/header-icon.svg" alt="">
+    <h1>Joseph Mansfield</h1>
+  </a>
+  
 
-		<main id="content">
-			<div class="container">
-				<article class="row" itemscope itemtype="http://schema.org/TechArticle">
-					<div class="column-2">
-						<header>
-							<h1 itemprop="name">Exceptions, error codes, and assertions in C++</h1>
-						</header>
-						<p class="secondary" itemprop="description">An overview of the various error reporting mechanisms in C++ and a policy for deciding when each is appropriate.</p>
-<p>It can often be difficult to decide between the various methods of error reporting in C++. For example, some common advice is that exceptions should only be thrown in exceptional circumstances. Needless to say, this isn't particularly helpful. What exactly is an exceptional circumstance? An exception to what? If we throw assertions into the mix, this can become even more complicated.</p>
+<ul class="related-resources">
+  <li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external">@sftrabbit</a></li>
+  <li><a href="https://github.com/sftrabbit" title="GitHub" rel="external">GitHub</a></li>
+</ul>
+</header>
+      <main>
+        
+          <hgroup>
+            <h1>Exceptions, error codes, and assertions in C++</h1>
+            
+              <h2>
+                <time datetime="2014-07-15 00:00:00 +0100">
+                  
+                  15th
+                  
+                  July 2014
+                </time>
+              </h2>
+            
+          </hgroup>
+        
+        <p>It can often be difficult to decide between the various methods of error reporting in C++. For example, some common advice is that exceptions should only be thrown in exceptional circumstances. Needless to say, this isn't particularly helpful. What exactly is an exceptional circumstance? An exception to what? If we throw assertions into the mix, this can become even more complicated.</p>
 <p>In general, functions express a contract to the calling code. They promise to perform some operation and give a particular result according to the given inputs. A member function can be considered to take an additional parameter, <code>this</code>, which is the object it's acting on. When a member function is not <code>const</code>, its <code>this</code> parameter is also an output. Error reporting is how we handle when there is a problem with meeting this contract and ensure that the relevant parties have been informed.</p>
 <p>Error reporting can occur at compile-time, in which case the compiler emits the error, or at run-time. Detecting a problem at compile-time is usually much better, as the program simply will not build until it is fixed and there will be no run-time cost. However, run-time error reporting is necessary for problems that cannot be statically detected or for when the error can be considered part of the normal execution of the program as long as it is handled appropriately.</p>
 <section>
@@ -67,11 +74,11 @@
 	<h1>Static assertions</h1>
 	<p>The next best thing is to introduce your own static error checking with <a href="http://en.cppreference.com/w/cpp/language/static_assert"><code>static_assert</code></a>. Using <a href="http://en.cppreference.com/w/cpp/types">type traits</a> and constant expressions, we can form conditions that can be evaluated and checked at compile-time. For example, while we do not yet have concepts, it is easy to enforce that a template function should only be instantiated for an integral type:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">foo</span><span class="p">(</span><span class="n">T</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span>
-  <span class="n">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="s">&quot;T must be an integral type&quot;</span><span class="p">);</span>
+  <span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="s">&quot;T must be an integral type&quot;</span><span class="p">);</span>
   <span class="c1">// ...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 	<p>Static assertions can only evaluate constant expressions, so you won't be able to check anything that isn't known until run-time. For example, if you receive input from the user, you cannot check the value of this input with a <code>static_assert</code>. For that you need run-time error reporting.</p>
 </section>
@@ -81,7 +88,7 @@
 	<p>Exceptions can sometimes be quite difficult to decide when to use. What exactly constitute an exceptional circumstance? I prefer to think of it this way: a function should throw an exception if it is unable to fulfil the promise that it made to the calling code. To figure out what that promise is, summarize your function in one simple sentence (with no conjunctions). What does the function do? Look at the name of the function, the parameters it takes, and the objects it returns and write down what it promises. If you can't do this, perhaps your function should be simplified or split up into multiple functions.</p>
 	<p>Once you have a simple description of the function's behavior, it's easy to determine when an exception should be thrown. If it can't fulfil its promise, it should throw. It might be because the user gave it some arguments that were unsuitable or because some internal problem occurs - either way, throw an exception. As an example, consider the following function declaration:</p>
 
-<div class="highlight"><pre><code class="cpp"><span class="n">image</span> <span class="nf">load_image</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="o">::</span><span class="n">path</span> <span class="n">image_file_path</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">image</span> <span class="nf">load_image</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="o">::</span><span class="n">path</span> <span class="n">image_file_path</span><span class="p">);</span></code></pre></figure>
 
 	<p>It should be clear what this function promises to do. It says "I will load an image from the given file path." If it is unable to perform this job, perhaps because the file does not exist or there is some other I/O problem, it should throw an exception. In fact, what else would it do in these situations? If it returns, it has to return an <code>image</code> object after all. You could have a special value of <code>image</code> that represents that an error has occurred, but I strongly advise against that. Exceptions allow the function to break out early and not have to care about returning an object of the correct type.</p>
 	<p>The only issue with exceptions is that you have to be careful. With the lack of useful exception specifications in C++, it is important to check the documentation for a function to see if it throws. Always try to write <a href="http://stackoverflow.com/a/1853769/150634">exception safe code</a>.</p>
@@ -110,103 +117,21 @@
 	<p>Remember that carefully designing your functions can avoid the need for many of these checks by preventing the user from misusing them in the first place.</p>
 </section>
 
-					</div>
-					<div class="column-1">
-
-						<ins class="adsbygoogle josephmansfield-article-side" data-ad-client="ca-pub-6789411983750873" data-ad-slot="7401738733"></ins>
-
-						<footer>
-							<img class="author-photo" src="http://www.gravatar.com/avatar/9f438bc04462ee5af4132921a3474842.png?s=128" alt="Joseph Mansfield">
-							<p class="author">Written by <a class="author-name" href="/" rel="author" itemprop="author">Joseph Mansfield</a></p>
-							<ul class="related-resources">
-								<li><a href="https://github.com/sftrabbit" title="GitHub" rel="external"><img src="/images/github-color.svg" alt="GitHub"></a></li>
-								<li><a href="http://stackoverflow.com/users/150634/joseph-mansfield" title="Stack Overflow" rel="external"><img src="/images/stackoverflow-color.svg" alt="Stack Overflow"></a></li>
-								<li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external"><img src="/images/twitter-color.svg" alt="Twitter"></a></li>
-								<li><a href="https://plus.google.com/+JosephMansfield?rel=author" title="Google+" rel="external"><img src="/images/gplus-color.svg" alt="Google+"></a></li>
-								<li><a href="https://uk.linkedin.com/in/sftrabbit/" title="LinkedIn" rel="external"><img src="/images/linkedin-color.svg" alt="LinkedIn"></a></li>
-							</ul>
-
-							<p><small>Notice any mistakes? <a href="https://github.com/sftrabbit/JosephMansfieldArticles/blob/master/2014-07-15-exceptions-error-codes-assertions-c++.html">Fork the article on GitHub</a>.</small></p>
-						</footer>
-					</div>
-				</article>
-
-				<div class="row">
-					<div class="column-2">
-						<ins class="adsbygoogle josephmansfield-article-bottom" data-ad-client="ca-pub-6789411983750873" data-ad-slot="2589226334"></ins>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="column-2">
-						<div id="disqus_thread"></div>
-					</div>
-					<section class="column-1">
-						<h1>Share this article</h1>
-						<ul class="share-buttons">
-							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-height="24">Share on Google+</div></li>
-							<li><a href="https://twitter.com/share" class="twitter-share-button" data-text="Exceptions, error codes, and assertions in C++" data-size="large" data-via="sftrabbit">Share on Twitter</a></li>
-							<li class="facebook"><div class="fb-like" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div></li>
-						</ul>
-					</section>
-				</div>
-			</div>
-			<div class="alt">
-				<div class="container">
-					<div class="row">
-
-
-						<section class="column-2">
-							<h1>Want something else to read?</h1>
-									<article>
-										<h1><a href="/articles/avoiding-ambiguity-raw-pointers.html">Ambiguous raw pointers</a></h1>
-										<p class="secondary">A look at the properties of raw pointers, an abundant source of bugs and confusion for C++ programmers, that make them unsuitable for modern code.</p>
-										<p><a href="/articles/avoiding-ambiguity-raw-pointers.html">Read this C++ article →</a></p>
-									</article>
-
-						</section>
-
-						<section class="column-1">
-							<h1><img src="//feedburner.google.com/fb/images/pub/feed-icon16x16.png" alt=""> Hear about new articles</h1>
-							<p class="secondary">Subscribe to <a href="http://feeds.feedburner.com/JosephMansfield" rel="alternate external" type="application/rss+xml">the RSS feed</a> with your favourite news feed reader.</p>
-						</section>
-					</div>
-					<div class="row">
-						<div class="column-2">
-							<p><a class="button" href="/articles/">More articles…</a></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-		<footer>
-			<div class="container">
-				<div class="row">
-					<div class="column-2">
-						<p>&copy; Joseph Mansfield. Content licensed under a <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external"><abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr></a> license.</p>
-
-					</div>
-					<div class="column-1 social-buttons">
-						<div><a href="https://twitter.com/sftrabbit" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sftrabbit</a></div>
-						<div class="g-follow" data-height="24" data-href="https://plus.google.com/+JosephMansfield" data-rel="author"></div>
-					</div>
-				</div>
-			</div>
-		</footer>
-
-
-		<div id="fb-root"></div>
-		<script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script>
-
-		<script async>
-(function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-
+        
+          <div id="disqus_thread"></div>
+        
+      </main>
+      <footer><p>
+  &copy; Joseph Mansfield. Content licensed under a
+  <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external">
+    <abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr>
+  </a>
+  license.
+</p>
+</footer>
+    </div>
+    
+<script async>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -215,26 +140,6 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', 'UA-17335804-2', 'auto');
 ga('send', 'pageview');
 
-
-adsbygoogle = window.adsbygoogle || [];
-adsbygoogle.push({});
-adsbygoogle.push({});
-
-(function() {
-  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-  po.src = 'https://apis.google.com/js/plusone.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-
-(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&appId=526696677453668&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
 
 var disqus_shortname = 'josephmansfield';
 var disqus_identifier = '/articles/exceptions-error-codes-assertions-c++';
@@ -246,8 +151,7 @@ var disqus_title = "Exceptions, error codes, and assertions in C++";
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 })();
 
+</script>
 
-		</script>
-
-	</body>
+  </body>
 </html>
