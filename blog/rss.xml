@@ -8,12 +8,12 @@
     <title>Joseph Mansfield</title>
     <link>https://josephmansfield.uk</link>
     <description>RSS feed for Joseph Mansfield</description>
-    <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
+    <pubDate>Thu, 28 Aug 2014 00:00:00 +0000</pubDate>
     <item>
       <title>My Ludum Dare experience</title>
       <link>https://josephmansfield.uk/blog/my-ludum-dare-experience.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Thu, 28 Aug 2014 00:00:00 +0100</pubDate>
+      <pubDate>Thu, 28 Aug 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/blog/my-ludum-dare-experience.html</guid>
       <content:encoded><![CDATA[<figure><img src="{{ site.media_url }}/images/ludum-dare-2014-08/intro.png" alt="The Connected Worlds Training Facility intro screen: Welcome to the Connected Worlds Training Facility."></figure>
 <p>Last weekend, I took part in <a href="http://www.ludumdare.com/compo/">Ludum Dare</a> for the first time. Ludum Dare is a game development competition in which you have to make a game in 48 hours. Before the competition, everybody votes on a theme, and this time around the most popular theme was “Connected Worlds.” By the end, I had successfully managed to make a little game called <a href="http://www.ludumdare.com/compo/ludum-dare-30/?action=preview&uid=26559"><cite>Connected Worlds Training Facility</cite></a> which you can <a href="http://josephmansfield.uk/ConnectedWorldsTrainingFacility/">play online</a>.</p>
@@ -90,8 +90,8 @@
 	<p><a href="http://josephmansfield.uk/ConnectedWorldsTrainingFacility/">Play <cite>Connected Worlds Training Facility</cite></a> and please feel free to leave a comment here or on my <a href="http://www.ludumdare.com/compo/ludum-dare-30/?action=preview&uid=26559">Ludum Dare submission</a>.</p>
 </section>
 ]]></content:encoded>
-      <dc:date>2014-08-28T00:00:00+01:00</dc:date>
+      <dc:date>2014-08-28T00:00:00+00:00</dc:date>
     </item>
-    <dc:date>2014-08-28T00:00:00+01:00</dc:date>
+    <dc:date>2014-08-28T00:00:00+00:00</dc:date>
   </channel>
 </rss>

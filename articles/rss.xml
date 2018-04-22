@@ -193,7 +193,7 @@ if (std::cin >> first_name &&
       <title>C++ sequenced-before graphs</title>
       <link>https://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Wed, 17 Sep 2014 00:00:00 +0100</pubDate>
+      <pubDate>Wed, 17 Sep 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/articles/c++-sequenced-before-graphs.html</guid>
       <content:encoded><![CDATA[{% highlight cpp %}
 i = i++
@@ -280,13 +280,13 @@ f(i = 1, i = 2)
 <p>Finally, it is not always enough to look at the identifiers in expressions. Previously, we noted that an object <code>i</code> was modified in two parts of an expression. However, it’s possible to have two different identifiers, say <code>i</code> and <code>j</code>, that either refer to the same scalar object or are more complex data types that have a shared scalar object that they modify. Keep this in mind.</p>
 <p>Next time you come across a complex expression (which is hopefully not very often), you now have a great way to analyse the sequencing of evaluations and determine the possible execution paths of that expression. Perhaps this might reduce the number of questions on Stack Overflow about this topic, but if not, at least it gives a nice visual way to answer them.</p>
 ]]></content:encoded>
-      <dc:date>2014-09-17T00:00:00+01:00</dc:date>
+      <dc:date>2014-09-17T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>Exceptions, error codes, and assertions in C++</title>
       <link>https://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Tue, 15 Jul 2014 00:00:00 +0100</pubDate>
+      <pubDate>Tue, 15 Jul 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/articles/exceptions-error-codes-assertions-c++.html</guid>
       <content:encoded><![CDATA[<p>It can often be difficult to decide between the various methods of error reporting in C++. For example, some common advice is that exceptions should only be thrown in exceptional circumstances. Needless to say, this isn't particularly helpful. What exactly is an exceptional circumstance? An exception to what? If we throw assertions into the mix, this can become even more complicated.</p>
 <p>In general, functions express a contract to the calling code. They promise to perform some operation and give a particular result according to the given inputs. A member function can be considered to take an additional parameter, <code>this</code>, which is the object it's acting on. When a member function is not <code>const</code>, its <code>this</code> parameter is also an output. Error reporting is how we handle when there is a problem with meeting this contract and ensure that the relevant parties have been informed.</p>
@@ -347,13 +347,13 @@ image load_image(boost::filesystem::path image_file_path);
 	<p>Remember that carefully designing your functions can avoid the need for many of these checks by preventing the user from misusing them in the first place.</p>
 </section>
 ]]></content:encoded>
-      <dc:date>2014-07-15T00:00:00+01:00</dc:date>
+      <dc:date>2014-07-15T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>Don't use <code>auto</code> unless you mean it</title>
       <link>https://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Mon, 07 Jul 2014 00:00:00 +0100</pubDate>
+      <pubDate>Mon, 07 Jul 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/articles/dont-use-auto-unless-you-mean-it.html</guid>
       <content:encoded><![CDATA[<p>Since it's repurposing in C++11, <a href="http://en.cppreference.com/w/cpp/language/auto">the <code>auto</code> keyword</a> has largely been used as a convenience. It's one of the more well-known new features, perhaps because many programmers saw it as a way to simplify their code, but also has little consensus on when it should be used. It provides automatic type deduction in declarations based on their initializers. For example, <code>auto x = 5;</code> will deduce that <code>x</code> is an <code>int</code>.</p>
 <p>To beginner C++ programmers, <code>auto</code> may look like it provides dynamic typing as in JavaScript or Python. This is not the case. The type is still completely static because the type of the initializer is static too. Even if it were a declaration inside a function template, in which the initializer could have a different type depending on the particular template arguments, the type is static for each template instantiation and those template instantiations are themselves static. C++ is still a statically typed language.</p>
@@ -444,13 +444,13 @@ for (auto element : range) {
 <p>One problem that the AAA Style tries to solve, which I do not, is the horrible C declaration grammar. By using <code>auto</code> everywhere, we can easily see that a line is a variable declaration and we don't have to decode its type. Firstly, I don't think this should be the responsibility of <code>auto</code>, which is a much more powerful tool than a <code>var</code>-like keyword. Secondly, we can generally avoid the incredibly ugly type names and concepts will help us to do this.</p>
 <p>In summary, <code>auto</code> means anything. Only use it when you mean it, otherwise you make your code harder to read and introduce further problems. Just be patient for concepts, which will make this convention unified and logical. It'll pay off.</p>
 ]]></content:encoded>
-      <dc:date>2014-07-07T00:00:00+01:00</dc:date>
+      <dc:date>2014-07-07T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>A tour of the C++ standard</title>
       <link>https://josephmansfield.uk/articles/tour-cpp-standard.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Thu, 03 Jul 2014 00:00:00 +0100</pubDate>
+      <pubDate>Thu, 03 Jul 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/articles/tour-cpp-standard.html</guid>
       <content:encoded><![CDATA[<p>Perhaps more than any other language, C++ demands a certain level of intimacy from its programmers. Anybody who feels that they're getting serious with C++ should probably have a copy of the standard at hand. The are two reasons for this: the C++ language and library are fairly complex, so the standard serves as the ultimate reference (when <a href="http://cppreference.com">cppreference.com</a> doesn't suffice); and simply compiling a program and running it is often not enough to tell you whether the program is absolutely correct. Familiarizing yourself with the standard will help you know when to question the correctness of your code.</p>
 <section>
@@ -544,13 +544,13 @@ void foo() // declaration (a function definition)
 	<p>Before and after each C++ committee meeting, papers that have been written recently are mailed out to everybody. These mailings are available on the <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/">committee website</a>. Every now and then, one of those papers is a working draft of the C++ standard. Subscribe to the <a href="https://isocpp.org/blog/rss">Standard C++ RSS feed</a> to find out when new papers are mailed out.</p>
 </section>
 ]]></content:encoded>
-      <dc:date>2014-07-03T00:00:00+01:00</dc:date>
+      <dc:date>2014-07-03T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>Custom syntax highlighting with Jekyll and Pygments</title>
       <link>https://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/articles/custom-syntax-highlighting-jekyll-pygments.html</guid>
       <content:encoded><![CDATA[<p><a href="http://jekyllrb.com/">Jekyll</a> is a great tool for statically generating websites. Among its many neat features is a convenient template syntax for performing automatic syntax highlighting of code in your pages and posts:</p>
 
@@ -622,13 +622,13 @@ pygments.rb$ sudo gem install pygments.rb-VERSION.gem
 	<p>Replace <code>VERSION</code> with the version of pygments.rb that you're building. Just look for the <code>.gem</code> file.</p>
 </section>
 ]]></content:encoded>
-      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
+      <dc:date>2014-06-19T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>Ambiguous raw pointers</title>
       <link>https://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Thu, 19 Jun 2014 00:00:00 +0100</pubDate>
+      <pubDate>Thu, 19 Jun 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/articles/avoiding-ambiguity-raw-pointers.html</guid>
       <content:encoded><![CDATA[<p>I recently posted <a href="http://stackoverflow.com/a/22146244/150634">an answer on Stack Overflow</a> about the misuses of dynamic allocation and raw pointers (that is, types like <code>int*</code>). You'll probably see this kind of advice regularly in the context of modern C++. There's almost always safer alternatives that make your code much cleaner and are less likely to introduce bugs. While dynamic allocation and raw pointers are often found together, they are orthogonal concepts that each have their own problems. In this article, we'll look only at raw pointers.</p>
 <p>It's important to choose types that cannot be used in ways for which they weren't intended. This ensures that problems are detected earlier and that your interfaces are clean and expressive. I often think about what types <em>tell me</em>. Just by looking at the type of a variable (perhaps a function parameter), what can I determine about the values that it should take?</p>
@@ -741,13 +741,13 @@ void foo(char const* str);
 	<p>For further information, look up more about <a href="http://stackoverflow.com/q/106508/150634">smart pointers</a>, the slides for <a href="http://klmr.me/slides/modern-cpp/">“Don't use f*cking pointers”</a>, and <a href="http://programmers.stackexchange.com/q/56935/80257">“Why are pointers not recommended when coding with C++?”</a>.
 </section>
 ]]></content:encoded>
-      <dc:date>2014-06-19T00:00:00+01:00</dc:date>
+      <dc:date>2014-06-19T00:00:00+00:00</dc:date>
     </item>
     <item>
       <title>Marking as deprecated in C++14</title>
       <link>https://josephmansfield.uk/articles/marking-deprecated-c++14.html</link>
       <description><![CDATA[]]></description>
-      <pubDate>Mon, 09 Jun 2014 00:00:00 +0100</pubDate>
+      <pubDate>Mon, 09 Jun 2014 00:00:00 +0000</pubDate>
       <guid>https://josephmansfield.uk/articles/marking-deprecated-c++14.html</guid>
       <content:encoded><![CDATA[<p>It is common for entities in source code (functions, classes, etc.) to become obsolete or unsafe as a project undergoes development. It's usually a bad idea to remove those entities without any warning, as it'll break any code that interfaces with those entities. Instead, a good practice is to mark them as <a href="http://en.wikipedia.org/wiki/Deprecation">deprecated</a> in an attempt to discourage their use.</p>
 <p>The upcoming C++ release, <a href="http://en.wikipedia.org/wiki/C%2B%2B14">C++14</a>, introduces the <code>deprecated</code> attribute for specifying that an entity is deprecated. The compiler can then emit warnings whenever these entities are being used. In general, attributes are given as a comma-separated list in double square brackets and can be used in various locations. For example, we can deprecate a function by placing the <code>deprecated</code> attribute at the very beginning of the function declaration:</p>
@@ -841,7 +841,7 @@ class [[deprecated]] templ<int> {};
 <p>The <code>deprecated</code> attribute need only appear on a single declaration of a particular name or entity in order to mark it as deprecated. That is, later redeclaring without the attribute does not “undeprecate” the declaration. Placing the attribute in a header file declaration will ensure that it appears deprecated to all users of this header file.</p>
 <p>The <code>deprecated</code> attribute is supported by Clang 3.4 and GCC 4.9.</p>
 ]]></content:encoded>
-      <dc:date>2014-06-09T00:00:00+01:00</dc:date>
+      <dc:date>2014-06-09T00:00:00+00:00</dc:date>
     </item>
     <dc:date>2015-01-26T00:00:00+00:00</dc:date>
   </channel>
