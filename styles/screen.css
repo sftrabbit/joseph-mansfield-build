@@ -147,10 +147,10 @@ body {
       padding-bottom: 0.2em;
       margin: 2px 0 0 0; }
     @media (max-width: 670px) {
-      body header .title img {
-        height: 6em; }
-      body header .title h1 {
-        font: 30px "Goudy Bookletter 1911", serif; } }
+      body header .title:after {
+        content: "";
+        display: table;
+        clear: both; } }
     body header p {
       font: 22px "Goudy Bookletter 1911", serif;
       margin: 0em;
@@ -168,7 +168,8 @@ body {
           height: 32px; }
       @media (max-width: 670px) {
         body header .related-resources {
-          display: block; } }
+          display: block;
+          float: none; } }
   body main {
     margin: 2em 0;
     background-color: #fefefe; }
@@ -267,6 +268,12 @@ ul {
           margin: 0;
           font-size: 16px;
           font-weight: normal; }
+      @media (max-width: 420px) {
+        ul.posts > li > section > p {
+          float: none;
+          text-align: left; }
+        ul.posts > li > section > div {
+          margin: 0; } }
   ul.gallery {
     list-style-type: none; }
     ul.gallery > li {
@@ -276,15 +283,24 @@ ul {
         content: "";
         display: table;
         clear: both; }
+      ul.gallery > li > a {
+        display: block; }
       ul.gallery > li img {
         float: left;
-        width: 10em;
-        margin-right: 1em; }
-      ul.gallery > li h1 {
-        font-size: 16px;
-        margin: 0 0 0.5em 0; }
-      ul.gallery > li p {
-        margin: 0.5em 0; }
+        width: 10em; }
+      ul.gallery > li > div {
+        margin-left: 11em; }
+        ul.gallery > li > div h1 {
+          font-size: 16px;
+          margin: 0 0 0.5em 0; }
+        ul.gallery > li > div p {
+          margin: 0.5em 0; }
+      @media (max-width: 420px) {
+        ul.gallery > li img {
+          float: none;
+          margin-bottom: 1em; }
+        ul.gallery > li div {
+          margin: 0; } }
 
 dl dt {
   float: left;
@@ -624,5 +640,15 @@ body.index header .title h1 {
   float: none;
   margin: 0;
   font: 40px "Goudy Bookletter 1911", serif; }
+@media (max-width: 670px) {
+  body.index header .title h1 {
+    font: 36px "Goudy Bookletter 1911", serif; }
+  body.index header .title img {
+    height: 6em; } }
+@media (max-width: 420px) {
+  body.index header .title:after {
+    content: "";
+    display: table;
+    clear: both; } }
 body.index header .related-resources {
   float: none; }
