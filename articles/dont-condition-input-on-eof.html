@@ -64,7 +64,7 @@
         
         <p>New C++ developers often learn the following incorrect pattern for reading from a file:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">file</span><span class="p">.</span><span class="n">eof</span><span class="p">())</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">file</span><span class="p">.</span><span class="n">eof</span><span class="p">())</span> <span class="p">{</span>
   <span class="c1">// Read data from file</span>
   <span class="c1">// Process data</span>
 <span class="p">}</span></code></pre></figure>
@@ -78,13 +78,13 @@
 <p>The EOF bit is only set if you actually attempt to read anything beyond the end of the file. That is, if you were to call <a href="http://en.cppreference.com/w/cpp/io/basic_istream/get"><code>file.get()</code></a>, which extracts only a single character, reading the last character would not set the EOF bit, but the next call would. This doesn't fully answer the question, however, because some functions actually read one character beyond the data they extract. For example, <code>std::cin >> x</code>, where <code>x</code> is an <code>int</code>, discards any initial whitespace, and then will read up to and including a non-digit. The non-digit is not extracted, but it is read in order to determine that it should stop. Similarly, <code>std::getline</code> will read up to and including a newline character. These functions will also stop if they attempt to read beyond the end of the file. So the question remains &mdash; if we're reading the last line of a file with <code>std::getline</code>, why does it not attempt to read past the end of the file and therefore set the EOF bit?</p>
 <p>The answer is simple, but not immediately apparent: in general, all lines in a text file should end with a newline character &mdash; even the last line (in fact, the POSIX standards require it). In most text editors, this is not obvious because the final newline isn't visible in any way, but it's there (Sublime Text is one exception). There are <a href="http://stackoverflow.com/q/729692/150634">many reasons to have this newline character</a>, but it has unfortunate consequences for our <code>!file.eof()</code> loop. Consider the following file:</p>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text"><span></span>Today I pass the time reading
+<figure class="highlight"><pre><code class="language-text" data-lang="text">Today I pass the time reading
 a favorite haiku,
 saying the few words over and over.</code></pre></figure>
 
 <p>If we render the newline characters, it looks something like this:</p>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text"><span></span>Today I pass the time reading\n
+<figure class="highlight"><pre><code class="language-text" data-lang="text">Today I pass the time reading\n
 a favorite haiku,\n
 saying the few words over and over.\n</code></pre></figure>
 
@@ -93,13 +93,13 @@ saying the few words over and over.\n</code></pre></figure>
 <p>Of course, these operations are not specific to files. Any kind of input stream will exhibit the same behavior. The newline character at the end of files is frequently the cause of this problem, but conditioning on <code>eof()</code> is flawed regardless. It simply cannot tell if the following input will succeed or not. Any other I/O problems will also be ignored, since <code>eof()</code> only tells you if the EOF bit is set and not any of the other failure bits. This can lead to infinite loops.</p>
 <p>The correct and idiomatic approach to read from a stream is to condition on the success of the read itself. In this way, we attempt to extract the input and handle it appropriately if it fails. This means that you can stop at the right time and report problems to the user if necessary (if the stream data was incorrect). To loop over all lines in a file, for example, you should use the following:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">while</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">while</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="p">{</span>
   <span class="c1">// Process the line</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>Now we know for certain that the read succeeded before starting a new iteration of the loop. This also protects us against any other I/O problems that might cause it to fail. In fact, this pattern works everywhere, and should be used to validate any kind of input, even if you're not looping over it. For example, if you want to get some details about the user:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">first_name</span> <span class="o">&amp;&amp;</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">first_name</span> <span class="o">&amp;&amp;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">family_name</span> <span class="o">&amp;&amp;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">age</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// Success</span>

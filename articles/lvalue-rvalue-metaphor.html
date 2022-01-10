@@ -78,7 +78,7 @@
 	<p>We also come across values that do not belong to any particular object. For example, the literal <code>5</code> represents the abstract value of 5, but is not stored in any object. Similarly, if we have two <code>int</code> objects, <code>x</code> and <code>y</code>, the expression <code>x + y</code> gives us a value representing the result of the addition &mdash; this value is also not stored in an object.</p>
 	<p>A simple interpretation of lvalues and rvalues is that <b>lvalues represent objects and rvalues represent values</b>. In the following code, <code>x</code> denotes an object, so it's an lvalue. <code>x + 5</code> denotes a value, so it's an rvalue. The subexpression <code>5</code> is also an rvalue.</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="c1">// the argument is an lvalue expression</span>
 	<span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">);</span> <span class="c1">// the argument is an rvalue expression</span>
@@ -86,8 +86,8 @@
 
 	<p>I'm being careful here by using the word "represent". The truth is that rvalue expressions can denote objects too, but they still <em>represent</em> values. For example, some rvalue expressions result in the creation of a temporary object &mdash; such as a function call that returns by value <a href="#c++14" class="reference">[1] §5.2.2</a>. Although an object does really exist here, the expression can still be thought of as just representing a value of that type. Consider this function:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_message</span><span class="p">()</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="s">&quot;Hello, World!&quot;</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">get_message</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">"Hello, World!"</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
 
 	<p>Elsewhere in your code, the function call <code>get_message()</code> denotes the value of an <code>std::string</code> containing "Hello, World!", rather than a persistent object that you are going to manipulate.</p>
@@ -112,7 +112,7 @@
 	<p>A call to <code>std::move</code> is always an rvalue (value) expression. Because of this, <b><code>std::move</code> allows you to treat any expression as though it represents a value</b>. What's the purpose of this? Well, objects are persistent regions of storage that we don't expect to change when doing non-destructive operations on them. However, if we know that we don't need the object any longer, we can often use destructive yet more efficient implementations. Values are inherently transient, so treating an object like a value allows us to perform these more efficient operations. For example, by treating objects as values, we can efficiently steal their resources when copying them (which we call <dfn>moving</dfn>, rather than copying). Look up <a href="http://stackoverflow.com/q/3106110/150634">move semantics</a> to find out how to implement this for your classes.</p>
 	<p>In some cases, C++ will silently do this, treating your lvalues as rvalues <a href="#c++14" class="reference">[1] §12.8</a> (as though you had <code>std::move</code>d them). For example, when returning a local object from a function, the compiler knows that the object is no longer required and so can treat the returned expression as though it just represents a transient value:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">widget</span> <span class="nf">foo</span><span class="p">()</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">widget</span> <span class="nf">foo</span><span class="p">()</span>
 <span class="p">{</span>
 	<span class="n">widget</span> <span class="n">w</span><span class="p">;</span>
 	<span class="c1">// ...</span>
@@ -121,8 +121,8 @@
 
 	<p><code>std::forward</code> relies on a neat little trick involving type deduction and reference collapsing. Consider the following example:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-<span class="kt">void</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">x</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">x</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="n">foo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
 <span class="p">}</span></code></pre></figure>

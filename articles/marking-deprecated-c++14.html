@@ -65,43 +65,43 @@
         <p>It is common for entities in source code (functions, classes, etc.) to become obsolete or unsafe as a project undergoes development. It's usually a bad idea to remove those entities without any warning, as it'll break any code that interfaces with those entities. Instead, a good practice is to mark them as <a href="http://en.wikipedia.org/wiki/Deprecation">deprecated</a> in an attempt to discourage their use.</p>
 <p>The upcoming C++ release, <a href="http://en.wikipedia.org/wiki/C%2B%2B14">C++14</a>, introduces the <code>deprecated</code> attribute for specifying that an entity is deprecated. The compiler can then emit warnings whenever these entities are being used. In general, attributes are given as a comma-separated list in double square brackets and can be used in various locations. For example, we can deprecate a function by placing the <code>deprecated</code> attribute at the very beginning of the function declaration:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
-<span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{}</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span>
 
-<span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="n">foo</span><span class="p">();</span> <span class="c1">// we&#39;re using a deprecated function</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">foo</span><span class="p">();</span> <span class="c1">// we're using a deprecated function</span>
 <span class="p">}</span></code></pre></figure>
 
 <aside>Other existing attributes include <code>noreturn</code>, <code>carries_dependency</code>, and <code>alignas</code> (which has a different syntax).</aside>
 
 <p>Compiled with the latest build of <a href="http://clang.llvm.org/">clang</a>, this gives the following warning:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="nl">warning</span><span class="p">:</span> <span class="err">&#39;</span><span class="n">foo</span><span class="err">&#39;</span> <span class="n">is</span> <span class="n">deprecated</span> <span class="p">[</span><span class="o">-</span><span class="n">Wdeprecated</span><span class="o">-</span><span class="n">declarations</span><span class="p">]</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="nl">warning:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">is</span> <span class="n">deprecated</span> <span class="p">[</span><span class="o">-</span><span class="n">Wdeprecated</span><span class="o">-</span><span class="n">declarations</span><span class="p">]</span>
         <span class="n">foo</span><span class="p">();</span>
         <span class="o">^</span>
-<span class="nl">note</span><span class="p">:</span> <span class="err">&#39;</span><span class="n">foo</span><span class="err">&#39;</span> <span class="n">has</span> <span class="n">been</span> <span class="n">explicitly</span> <span class="n">marked</span> <span class="n">deprecated</span> <span class="n">here</span>
-<span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{}</span>
+<span class="n">note</span><span class="o">:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">has</span> <span class="n">been</span> <span class="n">explicitly</span> <span class="n">marked</span> <span class="n">deprecated</span> <span class="n">here</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span>
      <span class="o">^</span></code></pre></figure>
 
 <p>It is also possible to supply a message that may inform the users of the deprecated entity. This message must be given as a string literal in parentheses:
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="p">[[</span><span class="n">deprecated</span><span class="p">(</span><span class="s">&quot;use bar instead&quot;</span><span class="p">)]]</span>
-<span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">(</span><span class="s">"use bar instead"</span><span class="p">)]]</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span></code></pre></figure>
 
 <p>This gives the following warning instead:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="nl">warning</span><span class="p">:</span> <span class="err">&#39;</span><span class="n">foo</span><span class="err">&#39;</span> <span class="n">is</span> <span class="nl">deprecated</span><span class="p">:</span> <span class="n">use</span> <span class="n">bar</span> <span class="n">instead</span> <span class="p">[</span><span class="o">-</span><span class="n">Wdeprecated</span><span class="o">-</span><span class="n">declarations</span><span class="p">]</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="nl">warning:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">is</span> <span class="n">deprecated</span><span class="o">:</span> <span class="n">use</span> <span class="n">bar</span> <span class="n">instead</span> <span class="p">[</span><span class="o">-</span><span class="n">Wdeprecated</span><span class="o">-</span><span class="n">declarations</span><span class="p">]</span>
         <span class="n">foo</span><span class="p">();</span>
         <span class="o">^</span>
-<span class="nl">note</span><span class="p">:</span> <span class="err">&#39;</span><span class="n">foo</span><span class="err">&#39;</span> <span class="n">has</span> <span class="n">been</span> <span class="n">explicitly</span> <span class="n">marked</span> <span class="n">deprecated</span> <span class="n">here</span>
-<span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{}</span>
+<span class="n">note</span><span class="o">:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">has</span> <span class="n">been</span> <span class="n">explicitly</span> <span class="n">marked</span> <span class="n">deprecated</span> <span class="n">here</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span>
      <span class="o">^</span></code></pre></figure>
 
 <p>The <code>deprecated</code> attribute can also be applied to classes, typedefs, variables, non-static data members, enumerations, and template specializations. Here's a bunch of examples:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="c1">// Deprecate a function</span>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="c1">// Deprecate a function</span>
 <span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
-<span class="kt">void</span> <span class="n">foo</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span>
 
 <span class="c1">// Deprecate a variable</span>
 <span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
@@ -115,7 +115,7 @@
 
 <span class="c1">// Deprecate a class (or struct)</span>
 <span class="k">class</span> <span class="err">[[</span><span class="nc">deprecated</span><span class="p">]]</span> <span class="n">my_class</span> <span class="p">{</span>
-	<span class="k">public</span><span class="o">:</span>
+	<span class="nl">public:</span>
 		<span class="c1">// Deprecate a member</span>
 		<span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span> <span class="kt">int</span> <span class="n">member</span><span class="p">;</span>
 <span class="p">};</span>
@@ -137,7 +137,7 @@
 
 <p>For those who are curious about the seemingly inconsistent placement of attributes, such as them appearing after the <code>class</code> and <code>enum</code> keywords, it is to distinguish between the deprecation of such a type and the deprecation of a variable of that type. For example, the following deprecates the variable <code>c</code> and not the class itself:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span> <span class="k">class</span> <span class="nc">C</span> <span class="p">{</span> <span class="p">}</span> <span class="n">c</span><span class="p">;</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span> <span class="k">class</span> <span class="nc">C</span> <span class="p">{</span> <span class="p">}</span> <span class="n">c</span><span class="p">;</span></code></pre></figure>
 
 <p>The <code>deprecated</code> attribute need only appear on a single declaration of a particular name or entity in order to mark it as deprecated. That is, later redeclaring without the attribute does not “undeprecate” the declaration. Placing the attribute in a header file declaration will ensure that it appears deprecated to all users of this header file.</p>
 <p>The <code>deprecated</code> attribute is supported by Clang 3.4 and GCC 4.9.</p>

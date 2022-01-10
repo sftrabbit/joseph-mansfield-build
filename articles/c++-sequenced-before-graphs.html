@@ -62,7 +62,7 @@
             
           </hgroup>
         
-        <figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
+        <figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
 
 <p>This expression, and many like it, demonstrate the sequencing rules of C++ and how they can cause your program to behave in ways you might not expect. What should the result of this expression be given some initial value for <code>i</code>? Questions like this are extremely frequent on <a href="http://stackoverflow.com/questions/tagged/c++">Stack Overflow</a>. In this case, the answer is that this code is completely undefined &mdash; it could do anything. Literally anything (at least formally speaking).</p>
 <p>The C++ standard defines an execution path according to your code. Given particular inputs, the program will always follow this execution path. Sometimes, the standard allows multiple possible execution paths for your program. This gives compilers extra freedom to optimize in various ways. When the standard allows a particular set of possible paths, this is known as <dfn>unspecified behavior</dfn>. In other cases, the standard gives absolutely no requirements about the behavior of your program, and this is known as <dfn>undefined behavior</dfn>. Undefined behavior is certainly not something you want in your code.</p>
@@ -80,7 +80,7 @@
 </ul>
 <p>The rules that define when the sequenced-before relationship exists between two evaluations inherently form an acyclic directed graph structure. As an example, let’s consider the earlier line of code once again:</p>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
 
 <p>Let's first split it up into its subexpressions. The full expression is the assignment, which has two operands. The left operand is just <code>i</code>, while the right operand is <code>i++</code> which itself has <code>i</code> as an operand. The following tree represents this structure, where the arrows represent the sequenced-before relationship of the value computations of those subexpressions:</p>
 <figure><img src="/media/images/sequencing-graphs/subexpressions.png" alt="The subexpression tree of i = i++."></figure>
@@ -97,32 +97,32 @@
 
 <hr>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="o">++</span><span class="n">i</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">i</span> <span class="o">=</span> <span class="o">++</span><span class="n">i</span></code></pre></figure>
 <figure><img src="/media/images/sequencing-graphs/preincrement.png" alt="An sequenced-before graph for i = ++i."></figure>
 <p>It is interesting to see that by merely switching the postfix increment to a prefix increment, this expression has become well-defined. That’s because the increment of <code>i</code> has to occur before the value computation of the increment expression and, therefore, before the assignment to <code>i</code>.</p>
 <aside>Before C++11, this was actually considered undefined, despite having only one possible result.</aside>
 
 <hr>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span> <span class="o">+</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span> <span class="o">+</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
 <figure><img src="/media/images/sequencing-graphs/complex.png" alt="An sequenced-before graph for i = i++ + i++."></figure>
 <p>This is a slightly more complex adaptation of the expression we first looked at. It seems to be quite a popular example. It has undefined behaviour for the same reasons, but also exhibits unsequenced side effects and value computations between the two increments. In the same way, <code>i++ + i++</code> alone is undefined.</p>
 
 <hr>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">i</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span></code></pre></figure>
 <figure><img src="/media/images/sequencing-graphs/subscript.png" alt="An sequenced-before graph for i = v[i++]."></figure>
 <p>This one tends to be hard for many to grasp, although its problem is exactly the same as the previous examples. I suspect that most people think of <code>i++</code> as an operation that “returns the value of <code>i</code>, then increments <code>i</code>.” The problem is that the increment can happen at any point, and might happen after the assignment to <code>i</code>. The fact that we're using it as a subscript doesn't change anything.</p>
 
 <hr>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">i</span><span class="o">++</span> <span class="o">||</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">i</span><span class="o">++</span> <span class="o">||</span> <span class="n">i</span><span class="o">++</span></code></pre></figure>
 <figure><img src="/media/images/sequencing-graphs/logical-or.png" alt="An sequenced-before graph for i++ || i++."></figure>
 <p>This demonstrates the ability of some operators (namely <code>||</code>, <code>&&</code>, and <code>,</code>) to enforce sequencing between their operands. The standard states that every value computation and side effect associated with the left operand is sequenced before those of the right operand.</p>
 
 <hr>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span></span><span class="n">f</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">f</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span></code></pre></figure>
 <figure><img src="/media/images/sequencing-graphs/function.png" alt="An sequenced-before graph for f(i = 1, i = 2)."></figure>
 <p>Here we’re calling a function and in each argument we’re assigning a different value to <code>i</code>. The evaluations of function arguments are also unsequenced, so we cannot say what the value of <code>i</code> will be after this expression has been evaluated.</p>
 
