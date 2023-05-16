@@ -310,12 +310,6 @@ ul {
         border-radius: 0.5rem; }
       ul.gallery > li p {
         margin: 1em 0; }
-      @media (max-width: 420px) {
-        ul.gallery > li img {
-          float: none;
-          margin-bottom: 1em; }
-        ul.gallery > li div {
-          margin: 0; } }
 
 dl dt {
   float: left;
