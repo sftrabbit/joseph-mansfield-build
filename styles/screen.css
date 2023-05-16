@@ -290,26 +290,26 @@ ul {
     list-style-type: none; }
     ul.gallery > li {
       margin-left: 0;
+      padding-bottom: 1em;
       margin-bottom: 1em; }
       ul.gallery > li:after {
         content: "";
         display: table;
         clear: both; }
+      ul.gallery > li > div {
+        margin-bottom: 1rem; }
+        ul.gallery > li > div h1 {
+          display: inline;
+          font-size: 16px; }
+        ul.gallery > li > div span {
+          font-style: italic; }
       ul.gallery > li > a {
         display: block; }
       ul.gallery > li img {
-        float: left;
-        width: 10em; }
-      ul.gallery > li > div {
-        margin-left: 11em; }
-        ul.gallery > li > div h1 {
-          display: inline;
-          font-size: 16px;
-          margin: 0 0 0.5em 0; }
-        ul.gallery > li > div span {
-          font-style: italic; }
-        ul.gallery > li > div p {
-          margin: 0.5em 0; }
+        width: 100%;
+        border-radius: 0.5rem; }
+      ul.gallery > li p {
+        margin: 1em 0; }
       @media (max-width: 420px) {
         ul.gallery > li img {
           float: none;
