@@ -1,0 +1,116 @@
+<!doctype html>
+<html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#" lang="en">
+  <head>
+    <title>
+      
+        Need a value? Pass by value —
+      
+      Joseph Mansfield
+    </title>
+    <meta charset="utf-8">
+
+  <meta name="description" content="Passing by value and by <code>const</code> reference typically mean the same thing to the caller yet may be chosen in different circumstances, depending on who you ask. Why is writing function parameters harder than it should be in C++? Instead, let's keep it simple.">
+
+<meta name="author" content="Joseph Mansfield">
+<meta name="viewport" content="width=device-width,user-scalable=no">
+<link rel="author" href="https://josephmansfield.uk">
+<link rel="logo" type="image/svg" href="/images/logo.svg">
+<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
+<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<link rel="stylesheet" href="/styles/screen.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Ubuntu+Mono">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@sftrabbit">
+<meta property="og:title" content="Need a value? Pass by value">
+<meta property="og:site_name" content="Joseph Mansfield">
+<meta property="og:url" content="https://josephmansfield.uk/articles/need-value-pass-by-value.html">
+<meta property="og:description" content="Passing by value and by <code>const</code> reference typically mean the same thing to the caller yet may be chosen in different circumstances, depending on who you ask. Why is writing function parameters harder than it should be in C++? Instead, let's keep it simple.">
+<meta property="og:image" content="https://josephmansfield.uk/images/logo.png">
+<meta property="fb:app_id" content="526696677453668">
+
+  </head>
+  <body>
+    <div class="container">
+      <header><a class="contentskip" href="#content">Skip to content</a>
+
+  <a class="title" href="/">
+    <img src="/images/header-icon.svg" alt="">
+    <h1>Joseph Mansfield</h1>
+  </a>
+  
+
+<ul class="related-resources">
+  <li><a href="https://sftrabbit.itch.io" title="Twitter" rel="external">itch.io</a></li>
+  <li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external">Twitter</a></li>
+  <li><a href="https://github.com/sftrabbit" title="GitHub" rel="external">GitHub</a></li>
+</ul>
+</header>
+      <main>
+        
+          <hgroup>
+            <h1>Need a value? Pass by value</h1>
+            
+              <h2>
+                <time datetime="2014-12-23 00:00:00 +0000">
+                  
+                  23rd
+                    
+                  December 2014
+                </time>
+              </h2>
+            
+          </hgroup>
+        
+        <p>C++ experts have a tendency to over-complicate the language's best practices through rigorous academic discussions about the optimality of every possible line of code. This makes it difficult to learn C++ because the rules are complicated and a consensus is difficult to find.</p>
+<p>One particular case that I have come across a lot recently is the choice of whether to take a parameter by value or by <code>const</code> reference. These can both used for the same purpose &mdash; to get the value of the passed argument. After all, either will except any object of the correct type (whether temporary or not). For a long time, passing by <code>const</code> reference was popular for anything that wasn't a primitive type, to save from expensive copies. Since C++11 and the introduction of move semantics, the commonly accepted practice is to pass by value only when your function is going to need a copy anyway &mdash; allowing the move constructor to be used when the caller passes a temporary object and allowing the function to use <code>std::move</code> internally where appropriate &mdash; and pass by <code>const</code> reference otherwise. More recently, <a href="https://www.youtube.com/watch?v=xnqTKD8uD64">Herb Sutter gave evidence</a> that using a <code>const</code> reference might actually be more optimal in certain situations. I couldn't blame a person for being confused by all these different ideas about how to achieve optimal code.</p>
+<p>However, there are a few problems with these approaches:</p>
+<ul>
+	<li>We now have two things, value types and <code>const</code> references, that say the same thing to the caller: I need the value of your object. The choice of which is used often depends on what the function does to that value internally, thereby leaking internal details that the caller shouldn't need to care about. A new C++ programmer has to know this to avoid confusion and when to use each approach. A beginner shouldn't have to know the details of move semantics and copy optimizations just to write some function parameters.</li>
+	<li>A <code>const</code> reference doesn't succintly express its intention. It gets access to the caller's object and only transitively access to that object's value &mdash; it gets more information than is required. A <code>const</code> reference <em>could</em> mean something else. Is it going to keep this reference? Do you need to ensure an extended lifetime of your object? This isn't clear from the parameter types alone. Passing by value, on the other hand, is very expressive &mdash; it cares only about the value provided.</li>
+	<li>These approaches attempt to optimize before we even know that we need to &mdash; this is the very definition of premature optimization, which we all know is the <a href="http://c2.com/cgi/wiki?PrematureOptimization">"root of all evil"</a>. Most copies have minimal costs which are often mitigated by copy elision and move semantics anyway. Unless you're copying very frequently in a time or space critical part of your program, do you really need to complicate your interfaces for the sake of unnecessary optimizations? For the most part, optimization should be the compilers job &mdash; the programmer should only step in when necessary.</li>
+</ul>
+<p>For these reasons, I consider a <code>const</code> reference argument being used for the sake of optimization a <i>messy optimization</i>. It's an optimization that trades away the simplicity and readability of your interfaces, so it had better be worth it. Simplicity and readability come first &mdash; optimize later when you measure that there's a performance problem.</p>
+<p>So what if you do measure that there's a problem? Are you copying objects around that don't really need to be copied? Are those copies expensive? If so, I don't think that <code>const</code> references should be your first port of call. First try something like the <a href="http://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a> mechanism, in which the internals of an object are only copied when written to. This way, an expensive copy is only performed when necessary and your function interfaces remain exactly the same (the copy-on-write is hidden from the user). If copy-on-write doesn't help &mdash; and <a href="http://www.gotw.ca/publications/optimizations.htm">there is evidence</a> that it might lead to bad performance when implemented for multi-threaded environments &mdash; then try something else. Sure, <code>const</code> references might be appropriate at this point. However, you should only use them when necessary, isolate them to a specific region of your code, and document their use. A reference parameter intrudes on the caller's space. I don't want to have to wonder why your function wants a reference to my object &mdash; just tell me.</p>
+<p>This effectively makes the only use of <code>const</code> references when we actually require immutable access to the caller's object. That is, when the the caller's object itself, not only its value, is important to us. In these cases, we typically want to track changes to the value of that particular object. Alternatively, we might want access to an object that we really can't copy, perhaps because copying doesn't make sense for that type or you're working in a very low memory environment. These situations occur significantly less often than we use <code>const</code> references today.</p>
+<p>So let's keep it simple: <b>Need a value? Pass by value.</b> It's a rule that is easy to understand, simple to teach, and gives us safe interfaces and readable code. Messy optimizations should only be used when necessary.</p>
+
+        
+          <div id="disqus_thread"></div>
+        
+      </main>
+      <footer><p>
+  &copy; Joseph Mansfield. Content licensed under a
+  <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external">
+    <abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr>
+  </a>
+  license.
+</p>
+</footer>
+    </div>
+    
+<script async>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-17335804-2', 'auto');
+ga('send', 'pageview');
+
+
+var disqus_shortname = 'josephmansfield';
+var disqus_identifier = '/articles/need-value-pass-by-value';
+var disqus_title = "Need a value? Pass by value";
+
+(function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+
+</script>
+
+  </body>
+</html>

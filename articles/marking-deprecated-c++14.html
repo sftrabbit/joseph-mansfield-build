@@ -1,0 +1,183 @@
+<!doctype html>
+<html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#" lang="en">
+  <head>
+    <title>
+      
+        Marking as deprecated in C++14 —
+      
+      Joseph Mansfield
+    </title>
+    <meta charset="utf-8">
+
+  <meta name="description" content="The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.">
+
+<meta name="author" content="Joseph Mansfield">
+<meta name="viewport" content="width=device-width,user-scalable=no">
+<link rel="author" href="https://josephmansfield.uk">
+<link rel="logo" type="image/svg" href="/images/logo.svg">
+<link rel="icon" sizes="16x16" type="image/vnd.microsoft.icon" href="/images/icon-16.ico">
+<link rel="icon" sizes="32x32" type="image/vnd.microsoft.icon" href="/images/icon-32.ico">
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<link rel="stylesheet" href="/styles/screen.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911|Roboto:400italic,700italic,400,700|Ubuntu+Mono">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@sftrabbit">
+<meta property="og:title" content="Marking as deprecated in C++14">
+<meta property="og:site_name" content="Joseph Mansfield">
+<meta property="og:url" content="https://josephmansfield.uk/articles/marking-deprecated-c++14.html">
+<meta property="og:description" content="The upcoming C++14 standard introduces an attribute for marking declarations as deprecated, useful for discouraging any use of the declared entity.">
+<meta property="og:image" content="https://josephmansfield.uk/images/logo.png">
+<meta property="fb:app_id" content="526696677453668">
+
+  </head>
+  <body>
+    <div class="container">
+      <header><a class="contentskip" href="#content">Skip to content</a>
+
+  <a class="title" href="/">
+    <img src="/images/header-icon.svg" alt="">
+    <h1>Joseph Mansfield</h1>
+  </a>
+  
+
+<ul class="related-resources">
+  <li><a href="https://sftrabbit.itch.io" title="Twitter" rel="external">itch.io</a></li>
+  <li><a href="https://twitter.com/sftrabbit" title="Twitter" rel="external">Twitter</a></li>
+  <li><a href="https://github.com/sftrabbit" title="GitHub" rel="external">GitHub</a></li>
+</ul>
+</header>
+      <main>
+        
+          <hgroup>
+            <h1>Marking as deprecated in C++14</h1>
+            
+              <h2>
+                <time datetime="2014-06-09 00:00:00 +0000">
+                  
+                  9th
+                  
+                  June 2014
+                </time>
+              </h2>
+            
+          </hgroup>
+        
+        <p>It is common for entities in source code (functions, classes, etc.) to become obsolete or unsafe as a project undergoes development. It's usually a bad idea to remove those entities without any warning, as it'll break any code that interfaces with those entities. Instead, a good practice is to mark them as <a href="http://en.wikipedia.org/wiki/Deprecation">deprecated</a> in an attempt to discourage their use.</p>
+<p>The upcoming C++ release, <a href="http://en.wikipedia.org/wiki/C%2B%2B14">C++14</a>, introduces the <code>deprecated</code> attribute for specifying that an entity is deprecated. The compiler can then emit warnings whenever these entities are being used. In general, attributes are given as a comma-separated list in double square brackets and can be used in various locations. For example, we can deprecate a function by placing the <code>deprecated</code> attribute at the very beginning of the function declaration:</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">foo</span><span class="p">();</span> <span class="c1">// we're using a deprecated function</span>
+<span class="p">}</span></code></pre></figure>
+
+<aside>Other existing attributes include <code>noreturn</code>, <code>carries_dependency</code>, and <code>alignas</code> (which has a different syntax).</aside>
+
+<p>Compiled with the latest build of <a href="http://clang.llvm.org/">clang</a>, this gives the following warning:</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="nl">warning:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">is</span> <span class="n">deprecated</span> <span class="p">[</span><span class="o">-</span><span class="n">Wdeprecated</span><span class="o">-</span><span class="n">declarations</span><span class="p">]</span>
+        <span class="n">foo</span><span class="p">();</span>
+        <span class="o">^</span>
+<span class="n">note</span><span class="o">:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">has</span> <span class="n">been</span> <span class="n">explicitly</span> <span class="n">marked</span> <span class="n">deprecated</span> <span class="n">here</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span>
+     <span class="o">^</span></code></pre></figure>
+
+<p>It is also possible to supply a message that may inform the users of the deprecated entity. This message must be given as a string literal in parentheses:
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">(</span><span class="s">"use bar instead"</span><span class="p">)]]</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span></code></pre></figure>
+
+<p>This gives the following warning instead:</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="nl">warning:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">is</span> <span class="n">deprecated</span><span class="o">:</span> <span class="n">use</span> <span class="n">bar</span> <span class="n">instead</span> <span class="p">[</span><span class="o">-</span><span class="n">Wdeprecated</span><span class="o">-</span><span class="n">declarations</span><span class="p">]</span>
+        <span class="n">foo</span><span class="p">();</span>
+        <span class="o">^</span>
+<span class="n">note</span><span class="o">:</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">has</span> <span class="n">been</span> <span class="n">explicitly</span> <span class="n">marked</span> <span class="n">deprecated</span> <span class="n">here</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{}</span>
+     <span class="o">^</span></code></pre></figure>
+
+<p>The <code>deprecated</code> attribute can also be applied to classes, typedefs, variables, non-static data members, enumerations, and template specializations. Here's a bunch of examples:</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="c1">// Deprecate a function</span>
+<span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">();</span>
+
+<span class="c1">// Deprecate a variable</span>
+<span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
+<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+
+<span class="c1">// Deprecate one declarator in a multi-declarator declaration</span>
+<span class="kt">int</span> <span class="n">y</span> <span class="p">[[</span><span class="n">deprecated</span><span class="p">]],</span> <span class="n">z</span><span class="p">;</span>
+
+<span class="c1">// Deprecate a function parameter</span>
+<span class="kt">int</span> <span class="nf">triple</span><span class="p">([[</span><span class="n">deprecated</span><span class="p">]]</span> <span class="kt">int</span> <span class="n">x</span><span class="p">);</span>
+
+<span class="c1">// Deprecate a class (or struct)</span>
+<span class="k">class</span> <span class="err">[[</span><span class="nc">deprecated</span><span class="p">]]</span> <span class="n">my_class</span> <span class="p">{</span>
+	<span class="nl">public:</span>
+		<span class="c1">// Deprecate a member</span>
+		<span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span> <span class="kt">int</span> <span class="n">member</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// Deprecate an enum</span>
+<span class="k">enum</span> <span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span> <span class="n">animals</span> <span class="p">{</span>
+	<span class="n">CAT</span><span class="p">,</span> <span class="n">DOG</span><span class="p">,</span> <span class="n">MOUSE</span>
+<span class="p">};</span>
+
+<span class="c1">// Deprecate a typedef</span>
+<span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span>
+<span class="k">typedef</span> <span class="kt">int</span> <span class="n">type</span><span class="p">;</span>
+
+<span class="c1">// Deprecate a template specialization</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">class</span> <span class="nc">templ</span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">class</span> <span class="err">[[</span><span class="nc">deprecated</span><span class="p">]]</span> <span class="n">templ</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="p">{};</span></code></pre></figure>
+
+<p>For those who are curious about the seemingly inconsistent placement of attributes, such as them appearing after the <code>class</code> and <code>enum</code> keywords, it is to distinguish between the deprecation of such a type and the deprecation of a variable of that type. For example, the following deprecates the variable <code>c</code> and not the class itself:</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="p">[[</span><span class="n">deprecated</span><span class="p">]]</span> <span class="k">class</span> <span class="nc">C</span> <span class="p">{</span> <span class="p">}</span> <span class="n">c</span><span class="p">;</span></code></pre></figure>
+
+<p>The <code>deprecated</code> attribute need only appear on a single declaration of a particular name or entity in order to mark it as deprecated. That is, later redeclaring without the attribute does not “undeprecate” the declaration. Placing the attribute in a header file declaration will ensure that it appears deprecated to all users of this header file.</p>
+<p>The <code>deprecated</code> attribute is supported by Clang 3.4 and GCC 4.9.</p>
+
+        
+          <div id="disqus_thread"></div>
+        
+      </main>
+      <footer><p>
+  &copy; Joseph Mansfield. Content licensed under a
+  <a href="http://creativecommons.org/licenses/by/4.0/" rel="license external">
+    <abbr title="Creative Commons Attribution-ShareAlike 4.0 International">CC BY-SA 4.0</abbr>
+  </a>
+  license.
+</p>
+</footer>
+    </div>
+    
+<script async>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-17335804-2', 'auto');
+ga('send', 'pageview');
+
+
+var disqus_shortname = 'josephmansfield';
+var disqus_identifier = '/articles/marking-deprecated-c++14';
+var disqus_title = "Marking as deprecated in C++14";
+
+(function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+
+</script>
+
+  </body>
+</html>
